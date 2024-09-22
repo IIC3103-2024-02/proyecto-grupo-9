@@ -2,19 +2,49 @@ import { Schema, model, Document, Types, models } from 'mongoose';
 
 export interface IProduct extends Document {
   _id: Types.ObjectId;
-  SKU: string;
+  sku: string;
+  name: string;
+  recipe: { 
+    sku: string, 
+    req: number 
+  }[];
+  production: {
+    at: string,
+    batch: number,
+    time: number,
+    groups: [string]
+  };
   expirationDate: Date;
-  location: string;
-  refrigerated: boolean;
+  cost: number;
+  price: number;
+  sellable: boolean;
+  storage: {
+    cold: boolean,
+  }
   createdAt: Date;
   updatedAt: Date;
 }
 
 const productSchema = new Schema<IProduct>({
-    SKU: { type: String, required: true },
+    sku: { type: String, required: true },
+    name: { type: String, required: true },
+    recipe: { 
+        type: [{ sku: String, req: Number }], 
+        required: true
+    },
+    production: {
+        at: { type: String, required: true },
+        batch: { type: Number, required: true },
+        time: { type: Number, required: true },
+        groups: { type: [String], required: true }
+    },
     expirationDate: { type: Date, required: true },
-    location: { type: String, required: true },
-    refrigerated: { type: Boolean, required: true },
+    cost: { type: Number, required: true },
+    price: { type: Number, required: true },
+    sellable: { type: Boolean, required: true, default: false },
+    storage: {
+        cold: { type: Boolean, required: true, default: false }
+    }
 }, { timestamps: true });
 
 const Product = models.Product || model<IProduct>("Product", productSchema);

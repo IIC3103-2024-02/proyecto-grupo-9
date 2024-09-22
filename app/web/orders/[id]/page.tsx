@@ -13,10 +13,8 @@ export default async function Page({params} : {params: {id: string}}) {
             <ul>
                 {order.products.map((product: IProduct) => (
                     <li key={product._id.toString()}>
-                        <h2>{product.SKU}</h2>
+                        <h2>{product.sku}</h2>
                         <p>Expiration date: {product.expirationDate.toString()}</p>
-                        <p>Location: {product.location}</p>
-                        <p>Refrigerated: {product.refrigerated ? 'Yes' : 'No'}</p>
                     </li>
                 ))}
             </ul>

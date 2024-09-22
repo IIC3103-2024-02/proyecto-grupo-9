@@ -18,10 +18,8 @@ export default async function Home() {
                         <ul>
                             {order.products.map((product: IProduct) => (
                                 <li key={product._id.toString()}>
-                                    <h3>{product.SKU}</h3>
+                                    <h3>{product.sku}</h3>
                                     <p>Expiration date: {product.expirationDate.toString()}</p>
-                                    <p>Location: {product.location}</p>
-                                    <p>Refrigerated: {product.refrigerated ? 'Yes' : 'No'}</p>
                                 </li>
                             ))}
                         </ul>
