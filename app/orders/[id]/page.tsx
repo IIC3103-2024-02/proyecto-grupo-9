@@ -1,8 +1,10 @@
 
 import Order from "@/models/Order";
 import { IProduct } from "@/models/Product";
+import connectDB from "@/lib/db";
 
 export default async function Page({params} : {params: {id: string}}) {
+    await connectDB();
     const order = await Order.findById(params.id).populate('products');
 
     return (

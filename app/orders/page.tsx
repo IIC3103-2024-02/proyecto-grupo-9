@@ -1,9 +1,11 @@
 
+import connectDB from "@/lib/db";
 import Order, { IOrder } from "@/models/Order";
 import { IProduct } from "@/models/Product";
 
 
 export default async function Home() {
+    await connectDB();
     const orders = await Order.find({}).populate('products')
 
     return (
