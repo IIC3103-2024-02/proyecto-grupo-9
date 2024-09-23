@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
         const data = req.json();
         console.log(data);
 
-        /* await Order.create(data); */
-
+        await Order.create(data);
+        
         return NextResponse.json({
             status: 'Aceptado'
         }, {status: 200});
