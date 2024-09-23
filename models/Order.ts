@@ -3,13 +3,20 @@ import { IProduct } from './Product';
 
 export interface IOrder extends Document {
   _id: string;
-  products: IProduct[];
+  products: { sku: string, quantity: number }[];
+  deliveryDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const orderSchema = new Schema<IOrder>({
-    products: [{ type: Schema.Types.ObjectId, ref: 'Product' }]
+    _id: { type: String, required: true },
+    products: {
+        type: [{ sku: String, quantity: Number }],
+        required: true
+    },
+    deliveryDate: { type: Date, required: true },
+
 }, { timestamps: true });
 
 const Order = models.Order || model<IOrder>("Order", orderSchema);
