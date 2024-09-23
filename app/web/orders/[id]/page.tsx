@@ -14,7 +14,6 @@ export default async function Page({params} : {params: {id: string}}) {
                 {order.products.map((product: IProduct) => (
                     <li key={product._id.toString()}>
                         <h2>{product.sku}</h2>
-                        <p>Expiration date: {product.expirationDate.toString()}</p>
                     </li>
                 ))}
             </ul>

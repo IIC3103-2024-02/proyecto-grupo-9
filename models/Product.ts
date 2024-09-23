@@ -14,7 +14,7 @@ export interface IProduct extends Document {
     time: number,
     groups: [string]
   };
-  expirationDate: Date;
+  expiration: number;
   cost: number;
   price: number;
   sellable: boolean;
@@ -26,7 +26,7 @@ export interface IProduct extends Document {
 }
 
 const productSchema = new Schema<IProduct>({
-    sku: { type: String, required: true },
+    sku: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     recipe: { 
         type: [{ sku: String, req: Number }], 
@@ -38,7 +38,7 @@ const productSchema = new Schema<IProduct>({
         time: { type: Number, required: true },
         groups: { type: [String], required: true }
     },
-    expirationDate: { type: Date, required: true },
+    expiration: { type: Number, required: true },
     cost: { type: Number, required: true },
     price: { type: Number, required: true },
     sellable: { type: Boolean, required: true, default: false },

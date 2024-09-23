@@ -16,14 +16,6 @@ export default async function Home() {
                 {orders.map((order: IOrder) => (
                     <li key={order._id.toString()}>
                         <h2>Order {order._id}</h2>
-                        <ul>
-                            {order.products.map((product: IProduct) => (
-                                <li key={product._id.toString()}>
-                                    <h3>{product.sku}</h3>
-                                    <p>Expiration date: {product.expirationDate.toString()}</p>
-                                </li>
-                            ))}
-                        </ul>
                     </li>
                 ))}
             </ul>
