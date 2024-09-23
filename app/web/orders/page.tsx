@@ -11,6 +11,7 @@ export default async function Home() {
     return (
         <div>
             <h1>Orders</h1>
+            <p>Aca van a estar todas las ordenes</p>
             <ul>
                 {orders.map((order: IOrder) => (
                     <li key={order._id.toString()}>
