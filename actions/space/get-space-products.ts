@@ -3,10 +3,11 @@
 import axios from "axios"
 import { fetchToken } from "@/lib/token"
 
-export async function getSpaceProducts(storeId: string) {
+export async function getSpaceProducts(storeId: string, sku: string) {
     try {
-        const token = fetchToken();
-        const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/products`,
+        const token = await fetchToken();
+
+        const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/products?sku=${sku}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -16,7 +17,7 @@ export async function getSpaceProducts(storeId: string) {
 
         return res.data;
     } catch (error: any) {
-        console.log(error.message);
+        console.log(error);
         return null;
     }
 }

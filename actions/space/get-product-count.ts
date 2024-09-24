@@ -5,7 +5,7 @@ import axios from "axios"
 
 export async function getProductCount(storeId: string) {
     try {
-        const token = fetchToken();
+        const token = await fetchToken();
         const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/inventory`,
             {
                 headers: {
@@ -16,7 +16,7 @@ export async function getProductCount(storeId: string) {
         
         return res.data;
     } catch (error: any) {
-        console.log(error.message);
+        console.log(error);
         return null;
     }
 }

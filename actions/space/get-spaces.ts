@@ -2,6 +2,28 @@
 
 import axios from "axios"
 import { fetchToken } from "@/lib/token"
+import { getProductCount } from "./get-product-count"
+
+interface Space {
+    _id: string;
+    cold: boolean;
+    buffer: boolean;
+    checkIn: boolean;
+    checkOut: boolean;
+    kitchen: boolean;
+    totalSpace: number;
+    usedSpace: number;
+}
+
+interface SpaceDictionary {
+    [key: string]: {
+        id: string;
+        name: string;
+        totalSpace: number;
+        usedSpace: number;
+        skuCount: { [skuName: string]: number };
+    };
+}
 
 export async function getSpaces() {
     try {
@@ -14,10 +36,34 @@ export async function getSpaces() {
                 Authorization: `Bearer ${token}`
             }
         });
+        const spaces = res.data as Space[];
+        const data: SpaceDictionary = {};
 
+        for (const space of spaces) {
+            // Find the first key with a value of true
+            const key = Object.keys(space).find(k => space[k as keyof Space] === true) as keyof Space;
+            console.log(key);
+            // If a valid key is found, populate the dictionary
+            if (key) {
+                const productCounts = await getProductCount(space._id);
+                const skuCount: { [sku: string]: number } = {};
+                productCounts.forEach((product: { sku: string ; quantity: number; }) => {
+                    skuCount[product.sku] = product.quantity;
+                });
+                console.log(skuCount);
 
-        return res.data;
+                data[key] = {
+                    id: space._id,
+                    name: key,
+                    totalSpace: space.totalSpace,
+                    usedSpace: space.usedSpace,
+                    skuCount: skuCount
+                };
+            }
+        };
+        return data;
     } catch (error: any) {
+        console.log(error);
         console.log(error.message);
         return null;
     }

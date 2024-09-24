@@ -5,7 +5,7 @@ import { fetchToken } from "@/lib/token"
 
 export async function requestProducts({ sku, quantity }: { sku: string, quantity: number }) {
     try {
-        const token = fetchToken();
+        const token = await fetchToken();
         const res = await axios.post(`${process.env.API_URI}/products`,
             {
                 "sku": sku,
