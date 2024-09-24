@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
 
         await Order.create(data);
         
+        
         return NextResponse.json({
             status: 'Aceptado'
         }, {status: 200});

@@ -8,6 +8,10 @@ export async function makeOrder(orderId: string) {
         await connectDB();
 
         const order = await Order.findById(orderId);
+
+        for (const product of order.products) {
+            
+        }
         
         return {
             status: 'Aceptado'
