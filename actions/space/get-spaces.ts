@@ -59,6 +59,7 @@ export async function getSpaces() {
                 };
             }
         };
+
         return data;
     } catch (error: any) {
         console.log(error);

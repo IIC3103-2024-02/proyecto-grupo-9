@@ -3,6 +3,13 @@
 import axios from "axios"
 import { fetchToken } from "@/lib/token"
 
+interface getSpaceProducts {
+    _id: string;
+    sku: string;
+    store: string;
+    expiresAt: Date; 
+}
+
 export async function getSpaceProducts(storeId: string, sku: string) {
     try {
         const token = await fetchToken();
@@ -15,6 +22,11 @@ export async function getSpaceProducts(storeId: string, sku: string) {
             }
         );
 
+        // order data by expiration date
+        res.data.sort((a: getSpaceProducts, b: getSpaceProducts) => {
+            return new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime();
+        });
+        
         return res.data;
     } catch (error: any) {
         console.log(error);

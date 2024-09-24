@@ -3,6 +3,17 @@
 import axios from "axios"
 import { fetchToken } from "@/lib/token"
 
+export interface requestProductInterface {
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+    sku: string;
+    group: number;
+    checkedOut: boolean;
+    availableAt: string;
+    quantity: number;
+}
+
 export async function requestProducts({ sku, quantity }: { sku: string, quantity: number }) {
     try {
         const token = await fetchToken();
@@ -17,9 +28,9 @@ export async function requestProducts({ sku, quantity }: { sku: string, quantity
                 }
             });
         
-        return res.data;
+        return res.data as requestProductInterface;
     } catch (error: any) {
-        console.log(error.message);
+        console.log(error);
         return null;
     }
 }

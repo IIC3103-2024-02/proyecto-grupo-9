@@ -36,6 +36,9 @@ export async function fetchToken() {
                 // Print the decoded token
             }
         }
+        if (!token) {
+            console.log('token not found')
+        }
         return token;
     } catch (error: any) {  
         console.log(error.message);

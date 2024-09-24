@@ -18,7 +18,9 @@ export async function moveProduct(storeId: string, productId: string) {
 
         return res.data;
     } catch (error: any) {
-        console.log(error.message);
+        console.log(error);
         return null;
     }
 }
+
+
