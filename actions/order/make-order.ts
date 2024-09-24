@@ -18,8 +18,7 @@ export async function makeOrder(orderId: string) {
             const spaces = await getSpaces();
             const productData = await Product.find({ sku: product.sku });
 
-            // check if the product is available in kitchen
-            // check if ingredients are available in kitchen
+            // check if the product is available in kitchen, move al aviailable products to check-out
             if (spaces && spaces.kitchen && spaces.kitchen.skuCount[product.sku] > product.quantity) {
                 // move to check-out area each one of the products
                 // get product id, remember to order them by expire date
@@ -29,6 +28,7 @@ export async function makeOrder(orderId: string) {
                     await moveProduct(spaces.checkOut.id, kitchenProduct[i].id);
                 }
             }
+            // check if ingredients are available in kitchen, start production and reuques more products if needed
             
             // move the product from the warehouse to the kitchen
             // if error, request more products and wait for them to arrive
