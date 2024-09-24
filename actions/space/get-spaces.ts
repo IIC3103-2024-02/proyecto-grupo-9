@@ -42,7 +42,6 @@ export async function getSpaces() {
         for (const space of spaces) {
             // Find the first key with a value of true
             const key = Object.keys(space).find(k => space[k as keyof Space] === true) as keyof Space;
-            console.log(key);
             // If a valid key is found, populate the dictionary
             if (key) {
                 const productCounts = await getProductCount(space._id);
@@ -50,7 +49,6 @@ export async function getSpaces() {
                 productCounts.forEach((product: { sku: string ; quantity: number; }) => {
                     skuCount[product.sku] = product.quantity;
                 });
-                console.log(skuCount);
 
                 data[key] = {
                     id: space._id,
