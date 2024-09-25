@@ -12,16 +12,16 @@ export async function POST(req: NextRequest) {
 
 
         const data = await req.json();
-        const { id, products, deliveryDate } = data;
+        const { id, order, dueDate } = data;
 
-        const order = await Order.create({
+        const o = await Order.create({
             _id: id,
-            products,
-            deliveryDate
+            products: order,
+            dueDate
         });
         
         //makeOrder(order._id)
-        manageOrder(order._id)
+        manageOrder(o._id)
 
         return NextResponse.json({
             status: 'Aceptado'
