@@ -22,7 +22,8 @@ export async function getProducts() {
 
         return res.data;
     } catch (error: any) {
-        console.log(error.message);
+        //console.log(error.message);
+        console.log("Error al solicitar productos");
         return null;
     }
 }
