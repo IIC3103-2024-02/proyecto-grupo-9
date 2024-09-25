@@ -4,7 +4,7 @@ import { IProduct } from './Product';
 export interface IOrder extends Document {
   _id: string;
   products: { sku: string, quantity: number }[];
-  deliveryDate: Date;
+  dueDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,7 +15,7 @@ const orderSchema = new Schema<IOrder>({
         type: [{ sku: String, quantity: Number }],
         required: true
     },
-    deliveryDate: { type: Date, required: true },
+    dueDate: { type: Date, required: true },
 
 }, { timestamps: true });
 
