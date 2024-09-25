@@ -1,6 +1,7 @@
 'use server'
 
 import { makeOrder } from "@/actions/order/make-order";
+import { manageOrder } from "@/actions/manuel/manage-order";
 import connectDB from "@/lib/db"
 import Order from "@/models/Order"
 import { NextResponse, NextRequest } from 'next/server';
@@ -19,7 +20,9 @@ export async function POST(req: NextRequest) {
             deliveryDate
         });
         
-        makeOrder(order._id)
+        //makeOrder(order._id)
+        manageOrder(order._id)
+
         return NextResponse.json({
             status: 'Aceptado'
         }, {status: 200});

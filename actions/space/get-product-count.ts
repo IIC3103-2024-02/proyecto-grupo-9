@@ -16,7 +16,8 @@ export async function getProductCount(storeId: string) {
         
         return res.data;
     } catch (error: any) {
-        console.log(error);
+        //onsole.log(error);
+        console.log("Error al solicitar conteo de productos en ", storeId);
         return null;
     }
 }

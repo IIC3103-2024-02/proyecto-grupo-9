@@ -8,9 +8,10 @@ export async function waitForProductAvailability(response: requestProductInterfa
 
     if (response && response.availableAt) {
         const availableAt = new Date(response.availableAt);
-        const now = new Date();
+        const createdAt = new Date(response.createdAt);
+        // const now = new Date();
 
-        const waitTime = availableAt.getTime() - now.getTime(); // Time difference in milliseconds
+        const waitTime = availableAt.getTime() - createdAt.getTime(); // Time difference in milliseconds
 
         if (waitTime > 0) {
             console.log('--------------------------------')

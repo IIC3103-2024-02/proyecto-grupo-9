@@ -18,7 +18,8 @@ export async function sendProduct(productId: string, group: number) {
         
         return res.data;
     } catch (error: any) {
-        console.log(error.message);
+        //console.log(error.message);
+        console.log("Error al enviar producto ", productId, " al grupo ", group);
         return null;
     }
 }

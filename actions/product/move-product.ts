@@ -18,7 +18,8 @@ export async function moveProduct(storeId: string, productId: string) {
 
         return res.data;
     } catch (error: any) {
-        console.log(error);
+        //console.log(error);
+        console.log("Error al mover producto ", productId, " al espacio ", storeId);
         return null;
     }
 }

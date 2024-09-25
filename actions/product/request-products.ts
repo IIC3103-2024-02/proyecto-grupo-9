@@ -27,10 +27,11 @@ export async function requestProducts({ sku, quantity }: { sku: string, quantity
                     Authorization: `Bearer ${token}`
                 }
             });
-        
+        console.log("Solicitando productos ", sku, ": ", quantity);
         return res.data as requestProductInterface;
     } catch (error: any) {
-        console.log(error);
+        //console.log(error);
+        console.log("Error al solicitar productos ", sku, ": ", quantity);
         return null;
     }
 }

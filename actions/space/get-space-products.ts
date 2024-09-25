@@ -29,7 +29,8 @@ export async function getSpaceProducts(storeId: string, sku: string) {
         
         return res.data;
     } catch (error: any) {
-        console.log(error);
+        //console.log(error);
+        console.log("Error al solicitar productos en el espacio ", storeId, ": ", sku);
         return null;
     }
 }
