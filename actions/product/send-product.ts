@@ -5,7 +5,7 @@ import { fetchToken } from "@/lib/token"
 
 export async function sendProduct(productId: string, group: number) {
     try {
-        const token = fetchToken();
+        const token = await fetchToken();
         const res = await axios.post(`${process.env.API_URI}/products/${productId}/group`,
             {
                 "group": group
@@ -18,7 +18,8 @@ export async function sendProduct(productId: string, group: number) {
         
         return res.data;
     } catch (error: any) {
-        console.log(error.message);
+        //console.log(error.message);
+        console.log("Error al enviar producto ", productId, " al grupo ", group);
         return null;
     }
 }

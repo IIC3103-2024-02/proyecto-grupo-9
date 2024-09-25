@@ -5,7 +5,7 @@ import { fetchToken } from "@/lib/token"
 
 export async function moveProduct(storeId: string, productId: string) {
     try {
-        const token = fetchToken();
+        const token = await fetchToken();
         const res = await axios.patch(`${process.env.API_URI}/products/${productId}`,
             {
                 "store": storeId
@@ -18,7 +18,10 @@ export async function moveProduct(storeId: string, productId: string) {
 
         return res.data;
     } catch (error: any) {
-        console.log(error.message);
+        //console.log(error);
+        console.log("Error al mover producto ", productId, " al espacio ", storeId);
         return null;
     }
 }
+
+
