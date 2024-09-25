@@ -1,3 +1,5 @@
+'use server'
+
 import { space } from "postcss/lib/list";
 import { getSpaces } from "../space/get-spaces";
 import Order from "@/models/Order";
