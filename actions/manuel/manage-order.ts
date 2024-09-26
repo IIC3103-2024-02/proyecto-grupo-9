@@ -21,9 +21,9 @@ export async function manageOrder(orderId: string) {
 
         /* order = await checkCheckOut(order) */
 
-        if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
+        /* if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
             moveSugarAndSweetener(order)
-        }
+        } */
         /* if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'CAFELATTE' || product.sku === 'CAFELATTEDOBLE' || product.sku === 'CAFEEXPRESSO' || product.sku === 'CAFEEXPRESSODOBLE')) {
             await setKitchen(order);
             await splitMilk();
@@ -39,7 +39,7 @@ export async function manageOrder(orderId: string) {
     }
 }
 
-async function moveSugarAndSweetener(order: IOrder) {
+/* async function moveSugarAndSweetener(order: IOrder) {
     if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
         const spaces = await getSpaces();
         for (const product of order.products) {
@@ -52,7 +52,7 @@ async function moveSugarAndSweetener(order: IOrder) {
         }
     }
 }
-
+ */
 /* async function checkCheckOut(order: IOrder) {
     console.log('Revisando checkOut')
     const spaces = await getSpaces();
