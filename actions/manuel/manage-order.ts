@@ -266,7 +266,7 @@ async function markOrderAsDone(orderId: string) {
     await order.save();
 }
 
-export default function sleep(ms: number): Promise<void> {
+export default async function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
