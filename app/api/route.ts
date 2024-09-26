@@ -7,7 +7,7 @@ import { getSpaces } from '@/actions/space/get-spaces';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const products = await getProducts();
+    /* const products = await getProducts(); */
     const spaces = await getSpaces();
     
 
