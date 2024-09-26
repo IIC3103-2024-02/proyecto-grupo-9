@@ -1,9 +1,9 @@
-'use server'
 
 import connectDB from "@/lib/db";
 import Order, { IOrder } from "@/models/Order";
 import OrdersTable from "./Table";
 
+export const revalidate = 0;
 
 export default async function Home() {
     await connectDB();
