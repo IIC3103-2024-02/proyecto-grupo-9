@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
 
 
         const data = await req.json();
+        console.log(data)
         const { id, order, dueDate } = data;
 
         const o = await Order.create({

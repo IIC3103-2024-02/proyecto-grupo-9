@@ -25,7 +25,7 @@ export default function OrdersTable({ orders }: { orders: IOrder[] }) {
             <tbody>
                 {orders.map((order) => (
                     <tr key={order._id.toString()}>
-                        <td>{new Date(order.createdAt).toLocaleString()}</td>
+                        <td>{order.createdAt.toLocaleString()}</td>
                         <td>{order._id}</td>
                         <td>
                             {order.products.map((product) => (
