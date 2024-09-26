@@ -70,7 +70,7 @@ function OrderDetails({ order }: { order?: IOrder }) {
                     </li>
                 ))}
             </ul>
-            <p>Estado del Pedido: {/* agregar estado*/}</p>
+            <p>Estado del Pedido: {order.status}</p>
         </div>
     );
 }
