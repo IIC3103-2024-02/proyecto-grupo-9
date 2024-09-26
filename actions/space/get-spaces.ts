@@ -1,4 +1,4 @@
-'use server'
+
 
 import axios from "axios"
 import { fetchToken } from "@/lib/token"
@@ -26,6 +26,8 @@ export interface SpaceData {
     usedSpace: number;
     skuCount: { [skuName: string]: number };
 }
+
+export const revalidate = 0;
 
 export async function getSpaces() {
     try {
