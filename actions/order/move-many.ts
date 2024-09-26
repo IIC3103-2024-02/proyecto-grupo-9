@@ -18,6 +18,11 @@ export async function moveMany({ sku, quantity, storeId }: { sku: string, quanti
             if (space.skuCount[sku] > 0 && storeId !== space.id) {
                 console.log(`Hay productos en ${space.name}`);
                 const products = await getSpaceProducts(space.id, sku);
+                if (!products) {
+                    return {
+                        error: 'No se pudieron obtener los productos'
+                    };
+                }
                 const moveCount = Math.min(remainingQuantity, products.length);
                 for (let i = 0; i < moveCount; i++) {
                     await moveProduct(storeId, products[i]._id);
