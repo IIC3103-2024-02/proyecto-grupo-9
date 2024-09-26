@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
 
         /* requestProducts({ sku: 'CAFEGRANO', quantity: 10}) */
         const products = await getSpaceProducts(spaces.buffer.id, 'CAFEGRANO')
-        console.log('cafe grano', products)
         if (!products) {
             throw new Error('No hay productos en el espacio checkOut');
         }
@@ -39,7 +38,6 @@ export async function POST(req: NextRequest) {
         await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: 40})
 
         const cups = await getSpaceProducts(spaces.buffer.id, 'VASOCAFEEXPRESO')
-        console.log('vasos', cups)
         if (!cups) {
             throw new Error('No hay productos en el espacio checkOut');
         }

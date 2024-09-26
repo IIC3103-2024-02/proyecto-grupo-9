@@ -15,10 +15,10 @@ export async function moveProduct(storeId: string, productId: string) {
                     Authorization: `Bearer ${token}`
                 }
             });
-
+        console.log("Se movió el producto ", productId, " al espacio ", storeId);
         return res.data;
     } catch (error: any) {
-        //console.log(error);
+        console.log(error.response.data);
         console.log("Error al mover producto ", productId, " al espacio ", storeId);
         return null;
     }
