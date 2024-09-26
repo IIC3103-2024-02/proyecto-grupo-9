@@ -21,13 +21,19 @@ export async function getSpaceProducts(storeId: string, sku: string) {
                 }
             }
         );
+        const products = res.data;
 
         // order data by expiration date
-        res.data.sort((a: getSpaceProducts, b: getSpaceProducts) => {
+        products.sort((a: getSpaceProducts, b: getSpaceProducts) => {
             return new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime();
         });
+
+        if (products.length === null) {
+            console.log("No hay productos en el espacio ", storeId, ": ", sku);
+            return [];
+        }
         
-        return res.data;
+        return products as getSpaceProducts[];
     } catch (error: any) {
         //console.log(error);
         console.log("Error al solicitar productos en el espacio ", storeId, ": ", sku);

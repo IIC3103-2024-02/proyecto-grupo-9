@@ -32,7 +32,7 @@ async function CheckMilk(order: number) {
 
 async function CheckSugar(order: number) {
     if (order % 8 === 0) {
-        requestProducts({ sku: 'ASUCARSACHET', quantity: 100 });
+        requestProducts({ sku: 'AZUCARSACHET', quantity: 100 });
     }
 }
 

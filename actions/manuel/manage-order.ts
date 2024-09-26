@@ -157,9 +157,7 @@ async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: st
         console.log('Intentando mover ', quantity, ' ', sku, ' desde ', origin, ' a ', destiny)
         const products = await getSpaceProducts(origin, sku);
         if (!products) {
-            return {
-                error: 'No se pudieron obtener los productos de ', origin
-            };
+            throw new Error('No se pudieron obtener los productos');
         }
         if (products.length >= quantity) {
             for (let i = 0; i < quantity; i++) {
@@ -179,7 +177,7 @@ async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: st
         }
     } catch (error: any) {
         console.log(error.message);
-        return null;
+        return 0;
     }
 }
 
@@ -247,8 +245,13 @@ async function cookAndDeliver(order: IOrder) {
         //     }
         // }
         const readyProducts = await getSpaceProducts(checkOut, product.sku);
-        for (const readyProduct of readyProducts) {
-            await deliverProduct(order._id, readyProduct._id);
+
+        if (readyProducts) {
+            for (const readyProduct of readyProducts) {
+                await deliverProduct(order._id, readyProduct._id);
+            }
+        } else {
+            console.log('No ready products found in checkOut');
         }
     }
 }
