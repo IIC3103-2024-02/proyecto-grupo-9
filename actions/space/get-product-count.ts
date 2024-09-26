@@ -9,7 +9,8 @@ export async function getProductCount(storeId: string) {
         const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/inventory`,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Cache-Control': 'no-store'
                 }
             }
         );

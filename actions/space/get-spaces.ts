@@ -36,7 +36,8 @@ export async function getSpaces() {
         }
         const res = await axios.get(`${process.env.API_URI}/spaces`, {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
+                'Cache-Control': 'no-store'
             }
         });
         const spaces = res.data as Space[];
