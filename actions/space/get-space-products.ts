@@ -11,11 +11,11 @@ interface getSpaceProducts {
 
 export const revalidate = 0;
 
-export async function getSpaceProducts(storeId: string, sku: string) {
+export async function getSpaceProducts(storeId: string, sku: string, limit: number = 100) {
     try {
         const token = await fetchToken();
 
-        const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/products?sku=${sku}`,
+        const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/products?sku=${sku}&limit=${limit}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

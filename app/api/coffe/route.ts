@@ -18,45 +18,50 @@ export async function POST(req: NextRequest) {
 
 
         const data = await req.json();
-        console.log(data)
         const { id, order, dueDate } = data;
         const spaces = await getSpaces();
-        const o = await Order.create({
-            _id: id,
-            products: order,
-            dueDate
-        });
 
-        /* requestProducts({ sku: 'CAFEGRANO', quantity: 10})
+        /* requestProducts({ sku: 'VASOCAFEEXPRESO', quantity: 120})  */
 
-        const products = await getSpaceProducts(spaces.buffer.id, 'CAFEGRANO')
-        if (!products) {
+        const coffe = await getSpaceProducts(spaces.buffer.id, 'CAFEGRANO', 3)
+        if (!coffe) {
             throw new Error('No hay productos en el espacio checkOut');
         }
-        for (let i = 0; i < 2; i++) {
-            await moveProduct(spaces.kitchen.id, products[i]._id)
+        for (let i = 0; i < coffe.length; i++) {
+            await moveProduct(spaces.kitchen.id, coffe[i]._id)
         }
-        await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: 40})
+        await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: 60})
 
-        const cups = await getSpaceProducts(spaces.buffer.id, 'VASOCAFEEXPRESO')
+        const cups = await getSpaceProducts(spaces.buffer.id, 'VASOCAFE', 60)
         if (!cups) {
             throw new Error('No hay productos en el espacio checkOut');
         }
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < cups.length; i++) {
             await moveProduct(spaces.kitchen.id, cups[i]._id)
         }
-        await sleep(130000) */
+       
+        const milk = await getSpaceProducts(spaces.buffer.id, 'LECHEENTERA', 5)
+        if (!milk) {
+            throw new Error('No hay productos en el espacio checkOut');
+        }
+        for (let i = 0; i < milk.length; i++) {
+            await moveProduct(spaces.kitchen.id, milk[i]._id)
+        }
+        await requestProducts({ sku: 'LECHEENTERAPORCION', quantity: 60})
 
-        await requestProducts({ sku: 'CAFEEXPRESSO', quantity: 90})
+        await sleep(130000) 
+
+        /* await requestProducts({ sku: 'CAFELATTE', quantity: 50}) 
         
-        await sleep(60000)
-        const expresos = await getSpaceProducts(spaces.kitchen.id, 'CAFEEXPRESSO')
+        await sleep(100000) */
+        /* const expresos = await getSpaceProducts(spaces.kitchen.id, 'CAFELATTE', 50)
+        console.log(expresos?.length)
         if (!expresos) {
             throw new Error('No hay productos en el espacio checkOut');
         }
-        for (let i = 0; i < 90; i++) {
+        for (let i = 0; i < expresos.length; i++) {
             await moveProduct(spaces.checkOut.id, expresos[i]._id)
-        }
+        }*/
 
 
         return NextResponse.json({
