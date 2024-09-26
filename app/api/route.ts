@@ -6,6 +6,8 @@ import { getSpaces } from '@/actions/space/get-spaces';
 
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
     /* const products = await getProducts(); */
     const spaces = await getSpaces();
