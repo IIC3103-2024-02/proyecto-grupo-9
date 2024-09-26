@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
         manageOrder(o._id)
 
         return NextResponse.json({
-            status: 'Aceptado'
+            status: 'aceptado'
         }, {status: 200});
         
     } catch (error) {
