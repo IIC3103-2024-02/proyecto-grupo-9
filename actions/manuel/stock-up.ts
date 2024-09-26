@@ -9,35 +9,55 @@ export async function stockUp() {
     console.log('Revisando stock');
     const orders = await Order.find();
     const n_order = orders.length;
-    CheckCoffee(n_order);
-    CheckMilk(n_order);
-    CheckSugar(n_order);
-    CheckSweetener(n_order);
-    CheckCoffeeCup(n_order);
-    CheckDoubleCoffeeCup(n_order);
-    CheckExpressoCup(n_order);
+    const spaces = await getSpaces();
+    if (!spaces) {
+        return {
+            error: 'No se pudieron obtener los espacios'
+        };
+    }
+    if (spaces.checkIn.skuCount['CAFEGRANO'] + spaces.buffer.skuCount['CAFEGRANO'] < 30) {
+        CheckCoffee(n_order);
+    }
+    if (spaces.checkIn.skuCount['LECHEENTERA'] + spaces.buffer.skuCount['LECHEENTERA'] < 30) {
+        CheckMilk(n_order);
+    }
+    if (spaces.checkIn.skuCount['AZUCARSACHET'] + spaces.buffer.skuCount['AZUCARSACHET'] < 30) {
+        CheckSugar(n_order);
+    }
+    if (spaces.checkIn.skuCount['ENDULZANTESACHET'] + spaces.buffer.skuCount['ENDULZANTESACHET'] < 30) {
+        CheckSweetener(n_order);
+    }
+    if (spaces.checkIn.skuCount['VASOCAFE'] + spaces.buffer.skuCount['VASOCAFE'] < 60) {
+        CheckCoffeeCup(n_order);
+    }
+    if (spaces.checkIn.skuCount['VASOCAFEDOBLE'] + spaces.buffer.skuCount['VASOCAFEDOBLE'] < 60) {
+        CheckDoubleCoffeeCup(n_order);
+    }
+    if (spaces.checkIn.skuCount['VASOCAFEEXPRESO'] + spaces.buffer.skuCount['VASOCAFEEXPRESO'] < 60) {
+        CheckExpressoCup(n_order);
+    }
 }
 
 async function CheckCoffee(order: number) {
-    if (order % 4 === 0) {
+    if (order % 15 === 0) {
         requestProducts({ sku: 'CAFEGRANO', quantity: 20 });
     }
 }
 
 async function CheckMilk(order: number) {
-    if (order % 3 === 0) {
+    if (order % 10 === 0) {
         requestProducts({ sku: 'LECHEENTERA', quantity: 12 });
     }
 }
 
 async function CheckSugar(order: number) {
-    if (order % 8 === 0) {
+    if (order % 15 === 0) {
         requestProducts({ sku: 'AZUCARSACHET', quantity: 100 });
     }
 }
 
 async function CheckSweetener(order: number) {
-    if (order % 8 === 0) {
+    if (order % 24 === 0) {
         requestProducts({ sku: 'ENDULZANTESACHET', quantity: 100 });
     }
 }
