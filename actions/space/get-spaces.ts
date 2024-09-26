@@ -16,13 +16,15 @@ interface Space {
 }
 
 interface SpaceDictionary {
-    [key: string]: {
-        id: string;
-        name: string;
-        totalSpace: number;
-        usedSpace: number;
-        skuCount: { [skuName: string]: number };
-    };
+    [key: string]: SpaceData;
+}
+
+export interface SpaceData {
+    id: string;
+    name: string;
+    totalSpace: number;
+    usedSpace: number;
+    skuCount: { [skuName: string]: number };
 }
 
 export async function getSpaces() {
@@ -30,6 +32,7 @@ export async function getSpaces() {
         const token = await fetchToken();
         if (!token) {
             console.log('Token not found');
+            return {}; // Return an empty object if token is not found
         }
         const res = await axios.get(`${process.env.API_URI}/spaces`, {
             headers: {
@@ -62,7 +65,7 @@ export async function getSpaces() {
 
         return data;
     } catch (error: any) {
-        //console.log(error.message);
         console.log('Error al obtener los espacios');
+        return {}; // Return an empty object in case of error
     }
 }

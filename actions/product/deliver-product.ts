@@ -21,8 +21,15 @@ export async function deliverProduct(orderId: string, productId: string) {
         console.log("Producto ", productId, " entregado exitosamente");
         return res.data;
     } catch (error: any) {
-        //console.log(error.message);
-        console.log("Error al entregar producto ", productId, " en la orden ", orderId);
+        if (error.response) {
+            // Print the entire error response body
+            console.log('Error response body:', error.response.data);
+        } else {
+            // If no response, print the general error message
+            console.log('Error message:', error.message);
+        }
+        console.log('Error al entregar producto ', productId, ' en la orden ', orderId);
         return null;
+        
     }
 }

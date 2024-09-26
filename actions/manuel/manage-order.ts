@@ -3,7 +3,7 @@
 import connectDB from "@/lib/db"
 import Order, { IOrder } from "@/models/Order"
 import Product, { IProduct } from "@/models/Product"
-import { getSpaces } from "../space/get-spaces";
+import { getSpaces, SpaceData } from "../space/get-spaces";
 import { moveProduct } from "../product/move-product";
 import { getSpaceProducts } from "../space/get-space-products";
 import { stockUp } from "./stock-up";
@@ -19,10 +19,16 @@ export async function manageOrder(orderId: string) {
         console.log('Orden encontrada: ', order)
 
         await setKitchen(order);
-        await splitMilk();
-        await grindCoffee();
+        if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
+            // If any product in the array matches AZUCARSACHET or ENDULZANTESACHET
+            console.log('Orden contiene AZUCARSACHET o ENDULZANTESACHET');
+        } else {
+            // If no matching product is found
+            await splitMilk();
+            await grindCoffee();
+        }
+        
         cookAndDeliver(order);
-        //markOrderAsDone(orderId);
         stockUp();
     }
     catch (error) {
@@ -83,12 +89,6 @@ async function whatDoINeed(order: IOrder) {
 
 async function whatDoIHave() {
     const spaces = await getSpaces();
-    console.log('Espacios: ', spaces)
-    if (!spaces) {
-        return {
-            error: 'No se pudieron obtener los espacios'
-        };
-    }
 
     const available_ingredients: Record<string, number> = {
         'CAFEMOLIDOPORCION': spaces.kitchen.skuCount['CAFEMOLIDOPORCION'] || 0,
@@ -96,8 +96,8 @@ async function whatDoIHave() {
         'VASOCAFE': spaces.kitchen.skuCount['VASOCAFE'] || 0,
         'VASOCAFEDOBLE': spaces.kitchen.skuCount['VASOCAFEDOBLE'] || 0,
         'VASOCAFEEXPRESO': spaces.kitchen.skuCount['VASOCAFEEXPRESO'] || 0,
-        'ENDULZANTESACHET': spaces.checkIn.skuCount['ENDULZANTESACHET'] + spaces.buffer.skuCount['ENDULZANTESACHET'] || 0,
-        'AZUCARSACHET': spaces.checkIn.skuCount['AZUCARSACHET'] + spaces.buffer.skuCount['AZUCARSACHET'] || 0
+        'ENDULZANTESACHET': spaces.checkIn.skuCount['ENDULZANTESACHET'] || spaces.buffer.skuCount['ENDULZANTESACHET'] || 0,
+        'AZUCARSACHET': spaces.checkIn.skuCount['AZUCARSACHET'] || spaces.buffer.skuCount['AZUCARSACHET'] || 0
     };
 
     console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
@@ -130,15 +130,8 @@ async function getMissingIngredients(necessary_ingredients: Record<string, numbe
 
 async function requestIngredientsToBuffer(missing_ingredients: Record<string, number>) {
     const spaces = await getSpaces();
-    if (!spaces) {
-        return {
-            error: 'No se pudieron obtener los espacios'
-        };
-    }
-    const buffer = spaces.buffer.id;
-    const kitchen = spaces.kitchen.id;
     for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: buffer, destiny: kitchen });
+        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: spaces.buffer, destiny: spaces.kitchen });
         missing_ingredients[ingredient] -= units;
     }
     return missing_ingredients;
@@ -146,40 +139,33 @@ async function requestIngredientsToBuffer(missing_ingredients: Record<string, nu
 
 async function requestIngredientsToCheckIn(missing_ingredients: Record<string, number>) {
     const spaces = await getSpaces();
-    if (!spaces) {
-        return {
-            error: 'No se pudieron obtener los espacios'
-        };
-    }
-    const checkIn = spaces.checkIn.id;
-    const kitchen = spaces.kitchen.id;
     for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: checkIn, destiny: kitchen });
+        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: spaces.checkIn, destiny: spaces.kitchen });
         missing_ingredients[ingredient] -= units;
     }
     return missing_ingredients;
 }
 
-async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: string, quantity: number, origin: string, destiny: string }) {
+async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: string, quantity: number, origin: SpaceData, destiny: SpaceData }) {
     try {
-        console.log('Intentando mover ', quantity, ' ', sku, ' desde ', origin, ' a ', destiny)
-        const products = await getSpaceProducts(origin, sku);
+        console.log('Intentando mover ', quantity, ' ', sku, ' desde ', origin.name, ' a ', destiny.name)
+        const products = await getSpaceProducts(origin.id, sku);
         if (!products) {
             throw new Error('No se pudieron obtener los productos');
         }
         if (products.length >= quantity) {
             for (let i = 0; i < quantity; i++) {
-                await moveProduct(destiny, products[i]._id);
-                console.log('Moviendo producto ', products[i].sku, ' desde ', origin, ' a ', destiny);
+                await moveProduct(destiny.id, products[i]._id);
+                console.log('Moviendo producto ', products[i].sku, ' desde ', origin.name, ' a ', destiny.name);
             }
             return quantity;
         } else if (products.length === 0) {
-            console.log('No hay ', sku, ' en ', origin);
+            console.log('No hay ', sku, ' en ', origin.name);
             return 0;
         } else {
             for (let i = 0; i < products.length; i++) {
-                await moveProduct(destiny, products[i]._id);
-                console.log('Moviendo producto ', products[i].sku + ' desde ' + origin + ' a ' + destiny);
+                await moveProduct(destiny.id, products[i]._id);
+                console.log('Moviendo producto ', products[i].sku + ' desde ' + origin.name + ' a ' + destiny.name);
             }
             return products.length;
         }
@@ -202,11 +188,6 @@ function checkKitchen(missing_ingredients: Record<string, number>) {
 async function splitMilk() {
     console.log('Separando leche')
     const spaces = await getSpaces();
-    if (!spaces) {
-        return {
-            error: 'No se pudieron obtener los espacios'
-        };
-    }
     const n_wholeMilk = spaces.kitchen.skuCount['LECHEENTERA'] || 0;
     if (n_wholeMilk > 0) {
         await requestProducts({ sku: 'LECHEENTERAPORCION', quantity: n_wholeMilk * 12 });
@@ -217,11 +198,6 @@ async function splitMilk() {
 async function grindCoffee() {
     console.log('Moliendo café')
     const spaces = await getSpaces();
-    if (!spaces) {
-        return {
-            error: 'No se pudieron obtener los espacios'
-        };
-    }
     const n_CoffeeBeans = spaces.kitchen.skuCount['CAFEGRANO'] || 0;
     if (n_CoffeeBeans > 0) {
         await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: n_CoffeeBeans * 20 });
@@ -232,30 +208,22 @@ async function grindCoffee() {
 async function cookAndDeliver(order: IOrder) {
     console.log('Cocinando y entregando')
     const spaces = await getSpaces();
-    if (!spaces) {
-        return {
-            error: 'No se pudieron obtener los espacios'
-        };
-    }
-    console.log('Cocina: ', spaces.kitchen)
-    const checkOut = spaces.checkOut.id;
-    const kitchen = spaces.kitchen.id;
     for (const product of order.products) {
         if (product.sku === 'ENDULZANTESACHET' || product.sku === 'AZUCARSACHET') {
-            const move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.buffer.id, destiny: checkOut });
+            const move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.buffer, destiny: spaces.checkOut });
             if (move < product.quantity) {
-                await moveManyIngredients({ sku: product.sku, quantity: product.quantity - move, origin: spaces.checkIn.id, destiny: checkOut });
+                await moveManyIngredients({ sku: product.sku, quantity: product.quantity - move, origin: spaces.checkIn, destiny: spaces.checkOut });
             }
         } else {
             await requestProducts({ sku: product.sku, quantity: product.quantity });
             await waitARequestedProduct(product.sku, product.quantity, "kitchen");
-            await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: kitchen, destiny: checkOut });
+            await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.kitchen, destiny: spaces.checkOut });
         }
-        const readyProducts = await getSpaceProducts(checkOut, product.sku);
+        const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
 
         if (readyProducts) {
-            for (const readyProduct of readyProducts) {
-                await deliverProduct(order._id, readyProduct._id);
+            for (let i = 0; i < product.quantity; i++) {
+                await deliverProduct(order._id, readyProducts[i]._id);
             }
             markOrderAsDone(order._id);
         } else {
@@ -274,30 +242,20 @@ function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function waitARequestedProduct(sku: string, quantity: number = 1, place: string) {
+async function waitARequestedProduct(sku: string, quantity: number = 1, spaceName: string) {
     const product = await Product.findOne({sku: sku});
     console.log('Esperando ', product.sku, ' ...')
 
     await sleep(product.production.time*1000*60+1000);
 
     let spaces = await getSpaces();
-    if (!spaces) {
-        return {
-            error: 'No se pudieron obtener los espacios'
-        };
-    }
-    let space = spaces[place];
+    let space = spaces[spaceName];
     let attempts = 0
-    while (!space.skuCount[sku] && attempts < 12) {
+    while (space.skuCount[sku] < quantity && attempts < 12) {
         console.log('Esperando ', product.sku, ' ... intento ', attempts)
-        await sleep(15*1000)
-        let spaces = await getSpaces();
-        if (!spaces) {
-            return {
-                error: 'No se pudieron obtener los espacios'
-            };
-        }
-        let space = spaces[place];
+        await sleep(30*1000)
+        spaces = await getSpaces();
+        space = spaces[spaceName];
         attempts++
     }
     
