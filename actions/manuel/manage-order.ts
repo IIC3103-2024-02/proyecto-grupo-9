@@ -15,26 +15,65 @@ export async function manageOrder(orderId: string) {
     try {
         console.log('---------------------------------------- Gestionando orden -----------------------------------------')
         await connectDB();
-        const order = await Order.findById(orderId);
+        let order = await Order.findById(orderId);
         console.log('Orden encontrada: ', order)
 
-        await setKitchen(order);
+        order = await checkCheckOut(order)
+
         if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
-            // If any product in the array matches AZUCARSACHET or ENDULZANTESACHET
-            console.log('Orden contiene AZUCARSACHET o ENDULZANTESACHET');
-        } else {
-            // If no matching product is found
+            moveSugarAndSweetener(order)
+        }
+        if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'CAFELATTE' || product.sku === 'CAFELATTEDOBLE' || product.sku === 'CAFEEXPRESO' || product.sku === 'CAFEEXPRESODOBLE')) {
+            await setKitchen(order);
             await splitMilk();
             await grindCoffee();
         }
-        
-        cookAndDeliver(order);
+        cookAndDeliver(order); 
         stockUp();
-    }
-    catch (error) {
+    } catch (error) {
         console.log('Error en manageOrder: ', error)
     }
 }
+
+async function moveSugarAndSweetener(order: IOrder) {
+    if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
+        const spaces = await getSpaces();
+        for (const product of order.products) {
+            if (product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET') {
+                const move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.buffer, destiny: spaces.checkOut });
+                if (move < product.quantity) {
+                    await moveManyIngredients({ sku: product.sku, quantity: product.quantity - move, origin: spaces.checkIn, destiny: spaces.checkOut });
+                }
+            }
+        }
+    }
+}
+
+async function checkCheckOut(order: IOrder) {
+    console.log('Revisando checkOut')
+    const spaces = await getSpaces();
+    for (const product of order.products) {
+        if (spaces.checkOut.skuCount[product.sku] >= product.quantity) {
+            const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
+            if (readyProducts) {
+                for (let i = 0; i < product.quantity; i++) {
+                    await deliverProduct(order._id.toString(), readyProducts[i]._id);
+                }
+                order.products = order.products.filter((p: {'sku': string, 'quantity': number}) => p.sku !== product.sku);
+                if (order.products.length === 0) {
+                    markOrderAsDone(order._id.toString());
+                }
+                order.save();
+            } else {
+                console.log('No ready products found in checkOut');
+            }
+        } else {
+            console.log('No hay suficientes ', product.sku, ' en checkOut');
+        }
+    }
+    return order;
+}
+
 
 async function setKitchen(order: IOrder) {
     const necessary_ingredients = await whatDoINeed(order);
@@ -44,19 +83,11 @@ async function setKitchen(order: IOrder) {
         return;
     }
 
-    const missing_ingredients = await getMissingIngredients(necessary_ingredients, available_ingredients);
-    const missing_ingredients2 = await requestIngredientsToBuffer(missing_ingredients);
-    if ('error' in missing_ingredients2) {
-        console.log(missing_ingredients2.error);
-        return
-    }
-    const missing_ingredients3 = await requestIngredientsToCheckIn(missing_ingredients2);
-    if ('error' in missing_ingredients3) {
-        console.log(missing_ingredients3.error);
-        return
-    } else if (!checkKitchen(missing_ingredients3)) {
+    let missing_ingredients = await getMissingIngredients(necessary_ingredients, available_ingredients);
+    missing_ingredients = await requestIngredientsToBuffer(missing_ingredients);
+    missing_ingredients = await requestIngredientsToCheckIn(missing_ingredients);
+    if (!checkKitchen(missing_ingredients)) {
         console.log('No se pudieron mover todos los ingredientes a cocina')
-        // stockUp();
         return;
     }
 }
@@ -69,16 +100,10 @@ async function whatDoINeed(order: IOrder) {
         'VASOCAFE': 0,
         'VASOCAFEDOBLE': 0,
         'VASOCAFEEXPRESO': 0,
-        'ENDULZANTESACHET': 0,
-        'AZUCARSACHET': 0
     };
 
     for (const product of order.products) {
         const productData = products.find(p => p.sku === product.sku);
-        if (productData.sku === 'ENDULZANTESACHET' || productData.sku === 'AZUCARSACHET') {
-            necessary_ingredients[productData.sku] += product.quantity;
-            continue;
-        }
         for (const ingredient of productData.recipe) {
             necessary_ingredients[`${ingredient.sku}`] += ingredient.req * product.quantity;
         }
@@ -96,8 +121,6 @@ async function whatDoIHave() {
         'VASOCAFE': spaces.kitchen.skuCount['VASOCAFE'] || 0,
         'VASOCAFEDOBLE': spaces.kitchen.skuCount['VASOCAFEDOBLE'] || 0,
         'VASOCAFEEXPRESO': spaces.kitchen.skuCount['VASOCAFEEXPRESO'] || 0,
-        'ENDULZANTESACHET': spaces.checkIn.skuCount['ENDULZANTESACHET'] || spaces.buffer.skuCount['ENDULZANTESACHET'] || 0,
-        'AZUCARSACHET': spaces.checkIn.skuCount['AZUCARSACHET'] || spaces.buffer.skuCount['AZUCARSACHET'] || 0
     };
 
     console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
@@ -153,6 +176,7 @@ async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: st
         if (!products) {
             throw new Error('No se pudieron obtener los productos');
         }
+
         if (products.length >= quantity) {
             for (let i = 0; i < quantity; i++) {
                 await moveProduct(destiny.id, products[i]._id);
@@ -169,6 +193,7 @@ async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: st
             }
             return products.length;
         }
+
     } catch (error: any) {
         console.log(error.message);
         return 0;
@@ -209,18 +234,12 @@ async function cookAndDeliver(order: IOrder) {
     console.log('Cocinando y entregando')
     const spaces = await getSpaces();
     for (const product of order.products) {
-        if (product.sku === 'ENDULZANTESACHET' || product.sku === 'AZUCARSACHET') {
-            const move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.buffer, destiny: spaces.checkOut });
-            if (move < product.quantity) {
-                await moveManyIngredients({ sku: product.sku, quantity: product.quantity - move, origin: spaces.checkIn, destiny: spaces.checkOut });
-            }
-        } else {
+        if (product.sku !== 'ENDULZANTESACHET' && product.sku !== 'AZUCARSACHET') {
             await requestProducts({ sku: product.sku, quantity: product.quantity });
             await waitARequestedProduct(product.sku, product.quantity, "kitchen");
             await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.kitchen, destiny: spaces.checkOut });
         }
         const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
-
         if (readyProducts) {
             for (let i = 0; i < product.quantity; i++) {
                 await deliverProduct(order._id, readyProducts[i]._id);
@@ -242,21 +261,24 @@ function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function waitARequestedProduct(sku: string, quantity: number = 1, spaceName: string) {
+async function waitARequestedProduct(sku: string, quantity: number, spaceName: string) {
     const product = await Product.findOne({sku: sku});
-    console.log('Esperando ', product.sku, ' ...')
+    const waitTime = product.production.time*1000*60+1000;
+    console.log('Esperando ',waitTime, ' ...')
 
-    await sleep(product.production.time*1000*60+1000);
+    await sleep(waitTime);
 
     let spaces = await getSpaces();
     let space = spaces[spaceName];
+    let count = space.skuCount[sku] || 0;
     let attempts = 0
-    while (space.skuCount[sku] < quantity && attempts < 12) {
+    console.log('Cantidad de', sku, 'en', spaceName, ':', count)
+    while (count < quantity && attempts < 12) {
         console.log('Esperando ', product.sku, ' ... intento ', attempts)
         await sleep(30*1000)
         spaces = await getSpaces();
         space = spaces[spaceName];
+        count = space.skuCount[sku] || 0;
         attempts++
     }
-    
 }
