@@ -153,6 +153,7 @@ async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: st
         if (!products) {
             throw new Error('No se pudieron obtener los productos');
         }
+
         if (products.length >= quantity) {
             for (let i = 0; i < quantity; i++) {
                 await moveProduct(destiny.id, products[i]._id);
@@ -169,6 +170,7 @@ async function moveManyIngredients({ sku, quantity, origin, destiny }: { sku: st
             }
             return products.length;
         }
+
     } catch (error: any) {
         console.log(error.message);
         return 0;
@@ -220,10 +222,10 @@ async function cookAndDeliver(order: IOrder) {
             await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.kitchen, destiny: spaces.checkOut });
         }
         const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
-
+        console.log('Productos listos: ', readyProducts)
         if (readyProducts) {
             for (let i = 0; i < product.quantity; i++) {
-                await deliverProduct(order._id, readyProducts[i]._id);
+                await deliverProduct(order._id.toString(), readyProducts[i]._id);
             }
             markOrderAsDone(order._id);
         } else {
@@ -242,20 +244,23 @@ function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function waitARequestedProduct(sku: string, quantity: number = 1, spaceName: string) {
+async function waitARequestedProduct(sku: string, quantity: number, spaceName: string) {
     const product = await Product.findOne({sku: sku});
-    console.log('Esperando ', product.sku, ' ...')
+    const waitTime = product.production.time*1000*60+1000;
+    console.log('Esperando ',waitTime, ' ...')
 
-    await sleep(product.production.time*1000*60+1000);
+    await sleep(waitTime);
 
     let spaces = await getSpaces();
     let space = spaces[spaceName];
     let attempts = 0
+    console.log('Cantidad de', sku, 'en', spaceName, ':', space.skuCount[sku])
     while (space.skuCount[sku] < quantity && attempts < 12) {
         console.log('Esperando ', product.sku, ' ... intento ', attempts)
         await sleep(30*1000)
         spaces = await getSpaces();
         space = spaces[spaceName];
+        console.log('Cantidad de', sku, 'en', spaceName, ':', space.skuCount[sku])
         attempts++
     }
     
