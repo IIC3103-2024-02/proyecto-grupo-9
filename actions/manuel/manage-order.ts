@@ -23,7 +23,7 @@ export async function manageOrder(orderId: string) {
         if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
             moveSugarAndSweetener(order)
         }
-        if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'CAFELATTE' || product.sku === 'CAFELATTEDOBLE' || product.sku === 'CAFEEXPRESO' || product.sku === 'CAFEEXPRESODOBLE')) {
+        if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'CAFELATTE' || product.sku === 'CAFELATTEDOBLE' || product.sku === 'CAFEEXPRESSO' || product.sku === 'CAFEEXPRESSODOBLE')) {
             await setKitchen(order);
             await splitMilk();
             await grindCoffee();
@@ -99,7 +99,7 @@ async function whatDoINeed(order: IOrder) {
         'LECHEENTERAPORCION': 0,
         'VASOCAFE': 0,
         'VASOCAFEDOBLE': 0,
-        'VASOCAFEEXPRESO': 0,
+        'VASOCAFEEXPRESSO': 0,
     };
 
     for (const product of order.products) {
@@ -120,7 +120,7 @@ async function whatDoIHave() {
         'LECHEENTERAPORCION': spaces.kitchen.skuCount['LECHEENTERAPORCION'] || 0,
         'VASOCAFE': spaces.kitchen.skuCount['VASOCAFE'] || 0,
         'VASOCAFEDOBLE': spaces.kitchen.skuCount['VASOCAFEDOBLE'] || 0,
-        'VASOCAFEEXPRESO': spaces.kitchen.skuCount['VASOCAFEEXPRESO'] || 0,
+        'VASOCAFEEXPRESSO': spaces.kitchen.skuCount['VASOCAFEEXPRESSO'] || 0,
     };
 
     console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
