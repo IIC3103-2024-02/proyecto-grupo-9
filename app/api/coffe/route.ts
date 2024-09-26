@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         for (let i = 0; i < 2; i++) {
             await moveProduct(spaces.kitchen.id, products[i]._id)
         }
-        requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: 40})
+        await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: 40})
 
         const cups = await getSpaceProducts(spaces.buffer.id, 'VASOCAFEEXPRESO')
         if (!cups) {
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         }
         await sleep(130000)
 
-        requestProducts({ sku: 'CAFEEXPRESSO', quantity: 40})
+        await requestProducts({ sku: 'CAFEEXPRESSO', quantity: 40})
         
         await sleep(60000)
         const expresos = await getSpaceProducts(spaces.kitchen.id, 'CAFEEXPRESSO')
