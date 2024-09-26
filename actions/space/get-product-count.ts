@@ -1,7 +1,9 @@
-'use server'
+
 
 import { fetchToken } from "@/lib/token";
 import axios from "axios"
+
+export const revalidate = 0;
 
 export async function getProductCount(storeId: string) {
     try {
