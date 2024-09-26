@@ -1,7 +1,8 @@
 'use server'
 
 import { requestProductInterface } from "../product/request-products";
-
+import connectDB from "@/lib/db";
+import Product from "@/models/Product";
 
 
 export async function waitForProductAvailability(response: requestProductInterface) {
@@ -9,9 +10,10 @@ export async function waitForProductAvailability(response: requestProductInterfa
     if (response && response.availableAt) {
         const availableAt = new Date(response.availableAt);
         const createdAt = new Date(response.createdAt);
-        // const now = new Date();
+        await connectDB()
+        const product = await Product.findOne({ sku: response.sku})
 
-        const waitTime = availableAt.getTime() - createdAt.getTime(); // Time difference in milliseconds
+        const waitTime = product.production.time * response.quantity * 60000// Time difference in milliseconds
 
         if (waitTime > 0) {
             console.log('--------------------------------')
