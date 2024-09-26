@@ -5,6 +5,7 @@ export interface IOrder extends Document {
   _id: string;
   products: { sku: string, quantity: number }[];
   dueDate: Date;
+  status: 'pending' | 'rejected' | 'ready';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,7 @@ const orderSchema = new Schema<IOrder>({
         type: [{ sku: String, quantity: Number }],
         required: true
     },
+    status: { type: String, enum: ['pending', 'rejected', 'ready'], default: "pending" },
     dueDate: { type: Date, required: true },
 
 }, { timestamps: true });

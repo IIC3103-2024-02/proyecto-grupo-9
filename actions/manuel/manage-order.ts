@@ -63,10 +63,16 @@ async function whatDoINeed(order: IOrder) {
         'VASOCAFE': 0,
         'VASOCAFEDOBLE': 0,
         'VASOCAFEEXPRESO': 0,
+        'ENDULZANTESACHET': 0,
+        'AZUCARSACHET': 0
     };
 
     for (const product of order.products) {
         const productData = products.find(p => p.sku === product.sku);
+        if (productData.sku === 'ENDULZANTESACHET' || productData.sku === 'AZUCARSACHET') {
+            necessary_ingredients[productData.sku] += product.quantity;
+            continue;
+        }
         for (const ingredient of productData.recipe) {
             necessary_ingredients[`${ingredient.sku}`] += ingredient.req * product.quantity;
         }
@@ -90,6 +96,8 @@ async function whatDoIHave() {
         'VASOCAFE': spaces.kitchen.skuCount['VASOCAFE'] || 0,
         'VASOCAFEDOBLE': spaces.kitchen.skuCount['VASOCAFEDOBLE'] || 0,
         'VASOCAFEEXPRESO': spaces.kitchen.skuCount['VASOCAFEEXPRESO'] || 0,
+        'ENDULZANTESACHET': spaces.checkIn.skuCount['ENDULZANTESACHET'] + spaces.buffer.skuCount['ENDULZANTESACHET'] || 0,
+        'AZUCARSACHET': spaces.checkIn.skuCount['AZUCARSACHET'] + spaces.buffer.skuCount['AZUCARSACHET'] || 0
     };
 
     console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
@@ -233,23 +241,23 @@ async function cookAndDeliver(order: IOrder) {
     const checkOut = spaces.checkOut.id;
     const kitchen = spaces.kitchen.id;
     for (const product of order.products) {
-        const response = await requestProducts({ sku: product.sku, quantity: product.quantity });
-        await waitARequestedProduct(product.sku, product.quantity, "kitchen");
-        let move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: kitchen, destiny: checkOut });
-        // if (!move) {
-        //     let attempts = 0
-        //     while (!move && attempts < 12) {
-        //         await sleep(15*1000)
-        //         move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: kitchen, destiny: checkOut });
-        //         attempts++
-        //     }
-        // }
+        if (product.sku === 'ENDULZANTESACHET' || product.sku === 'AZUCARSACHET') {
+            const move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.buffer.id, destiny: checkOut });
+            if (move < product.quantity) {
+                await moveManyIngredients({ sku: product.sku, quantity: product.quantity - move, origin: spaces.checkIn.id, destiny: checkOut });
+            }
+        } else {
+            await requestProducts({ sku: product.sku, quantity: product.quantity });
+            await waitARequestedProduct(product.sku, product.quantity, "kitchen");
+            await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: kitchen, destiny: checkOut });
+        }
         const readyProducts = await getSpaceProducts(checkOut, product.sku);
 
         if (readyProducts) {
             for (const readyProduct of readyProducts) {
                 await deliverProduct(order._id, readyProduct._id);
             }
+            markOrderAsDone(order._id);
         } else {
             console.log('No ready products found in checkOut');
         }
@@ -258,7 +266,7 @@ async function cookAndDeliver(order: IOrder) {
 
 async function markOrderAsDone(orderId: string) {
     const order = await Order.findById(orderId);
-    order.deliveryDate = new Date();
+    order.status = 'ready';
     await order.save();
 }
 
