@@ -1,74 +1,73 @@
 'use client';
 
+import Order from '@/models/Order';
 import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { IOrder } from '@/models/Order';
 
-interface Order {
-  _id: string;
-  createdAt: string; // Timestamp en UTC
-}
+
 
 function formatHour(dateString: string) {
-  const date = new Date(dateString);
-  return date.getUTCHours() + ":00"; // hora en UTC
+    const date = new Date(dateString);
+    return date.getUTCHours() + ":00"; // hora en UTC
 }
 
-function OrdersLineChart() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [chartData, setChartData] = useState<any[]>([]);
+interface OrdersLineChartProps {
+    orders: IOrder[];
+}
 
-  useEffect(() => {
-    async function fetchOrders() {
-      const response = await fetch('@/api/orders/route');
-      const data = await response.json();
-      setOrders(data);
-    }
+function OrdersLineChart({ orders: o }: OrdersLineChartProps) {
+    const [orders, setOrders] = useState<IOrder[]>([]);
+    const [chartData, setChartData] = useState<any[]>([]);
 
-    fetchOrders();
-  }, []);
-
-  useEffect(() => {
+    useEffect(() => {
+        if (o.length > 0) {
+            setOrders(o);
+        }
+    }, [o]);
+    useEffect(() => {
     // Contamos las órdenes por hora
-    const ordersByHour: { [key: string]: number } = {};
 
-    orders.forEach(order => {
-      const hour = formatHour(order.createdAt);
-      if (!ordersByHour[hour]) {
-        ordersByHour[hour] = 0;
-      }
-      ordersByHour[hour]++;
-    });
+        const ordersByHour: { [key: string]: number } = {};
 
-    const formattedData = Object.keys(ordersByHour).map(hour => ({
-      name: hour,
-      orders: ordersByHour[hour],
-    }));
+        orders.forEach(order => {
+            const hour = formatHour(order.createdAt.toString());
+            if (!ordersByHour[hour]) {
+                ordersByHour[hour] = 0;
+            }
+            ordersByHour[hour]++;
+        });
 
-    setChartData(formattedData);
-  }, [orders]);
+        const formattedData = Object.keys(ordersByHour).map(hour => ({
+            name: hour,
+            orders: ordersByHour[hour],
+        }));
 
-  return (
-    <div>
-      <h2>Órdenes recibidas por hora</h2>
-      {chartData.length > 0 ? (
-        <LineChart
-          width={730}
-          height={250}
-          data={chartData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" label={{ value: 'Hora (UTC)', position: 'insideBottom', offset: -5 }} />
-          <YAxis label={{ value: 'Número de Órdenes', angle: -90, position: 'insideLeft' }} />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="orders" stroke="#8884d8" />
-        </LineChart>
-      ) : (
-        <p>Cargando datos de orders...</p>
-      )}
-    </div>
-  );
+        setChartData(formattedData);
+    }, [orders]);
+
+    return (
+        <div>
+            <h2>Órdenes recibidas por hora</h2>
+            {chartData.length > 0 ? (
+                <LineChart
+                    width={730}
+                    height={250}
+                    data={chartData}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" label={{ value: 'Hora (UTC)', position: 'insideBottom', offset: -5 }} />
+                    <YAxis label={{ value: 'Número de Órdenes', angle: -90, position: 'insideLeft' }} />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="orders" stroke="#8884d8" />
+                </LineChart>
+            ) : (
+                <p>Cargando datos de orders...</p>
+            )}
+        </div>
+    );
 }
 
 export default OrdersLineChart;

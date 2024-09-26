@@ -12,45 +12,50 @@ export default function OrdersTable({ orders }: { orders: IOrder[] }) {
     };
 
     return (
-        <table className="w-screen text-center">
-            <thead>
+        <>
+        
+            {expandedOrder && (
                 <tr>
-                    <th>Fecha y Hora de Recepción</th>
-                    <th>ID de Pedido</th>
-                    <th>SKUs y Cantidad Solicitada</th>
-                    <th>Estado del Pedido</th>
-                    <th>Opciones</th>
+                    <td colSpan={5}>
+                        <OrderDetails order={orders.find((order) => order._id === expandedOrder)} />
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {orders.map((order) => (
-                    <tr key={order._id.toString()}>
-                        <td>{order.createdAt.toLocaleString()}</td>
-                        <td>{order._id}</td>
-                        <td>
-                            {order.products.map((product) => (
-                                <div key={product.sku}>
-                                    SKU: {product.sku}, Cantidad: {product.quantity}
-                                </div>
-                            ))}
-                        </td>
-                        <td>
-                            <button onClick={() => toggleExpand(order._id)}>
-                                {expandedOrder === order._id ? "Ocultar" : "Ver más"}
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-
-                {expandedOrder && (
+            )}
+            <table className="w-screen text-center">
+                <thead>
                     <tr>
-                        <td colSpan={5}>
-                            <OrderDetails order={orders.find((order) => order._id === expandedOrder)} />
-                        </td>
+                        <th>Fecha y Hora de Recepción</th>
+                        <th>ID de Pedido</th>
+                        <th>SKUs y Cantidad Solicitada</th>
+                        <th>Estado del Pedido</th>
+                        <th>Opciones</th>
                     </tr>
-                )}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                
+                    {orders.map((order) => (
+                        <tr key={order._id.toString()}>
+                            <td>{order.createdAt.toLocaleString()}</td>
+                            <td>{order._id}</td>
+                            <td>
+                                {order.products.map((product) => (
+                                    <div key={product.sku}>
+                                    SKU: {product.sku}, Cantidad: {product.quantity}
+                                    </div>
+                                ))}
+                            </td>
+                            <td>
+                                <button onClick={() => toggleExpand(order._id)}>
+                                    {expandedOrder === order._id ? "Ocultar" : "Ver más"}
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+
+                
+                </tbody>
+            </table>
+        </>
     );
 }
 

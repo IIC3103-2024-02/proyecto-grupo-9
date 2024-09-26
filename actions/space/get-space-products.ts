@@ -1,3 +1,4 @@
+'use server'
 
 import axios from "axios"
 import { fetchToken } from "@/lib/token"
@@ -8,8 +9,6 @@ interface getSpaceProducts {
     store: string;
     expiresAt: Date; 
 }
-
-export const revalidate = 0;
 
 export async function getSpaceProducts(storeId: string, sku: string, limit: number = 100) {
     try {
