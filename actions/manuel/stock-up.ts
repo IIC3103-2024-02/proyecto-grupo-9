@@ -33,7 +33,7 @@ export async function stockUp() {
     if (spaces.checkIn.skuCount['VASOCAFEDOBLE'] + spaces.buffer.skuCount['VASOCAFEDOBLE'] < 60) {
         CheckDoubleCoffeeCup(n_order);
     }
-    if (spaces.checkIn.skuCount['VASOCAFEEXPRESO'] + spaces.buffer.skuCount['VASOCAFEEXPRESO'] < 60) {
+    if (spaces.checkIn.skuCount['VASOCAFEEXPRESSO'] + spaces.buffer.skuCount['VASOCAFEEXPRESSO'] < 60) {
         CheckExpressoCup(n_order);
     }
 }
@@ -76,7 +76,7 @@ async function CheckDoubleCoffeeCup(order: number) {
 
 async function CheckExpressoCup(order: number) {
     if (order % 15 === 0) {
-        requestProducts({ sku: 'VASOCAFEEXPRESO', quantity: 120 });
+        requestProducts({ sku: 'VASOCAFEEXPRESSO', quantity: 120 });
     }
 }
 
@@ -104,7 +104,7 @@ async function CheckExpressoCup(order: number) {
 //         'ENDULZANTESACHET': 0,
 //         'VASOCAFE': 0,
 //         'VASOCAFEDOBLE': 0,
-//         'VASOCAFEEXPRESO': 0,
+//         'VASOCAFEEXPRESSO': 0,
 //     };
 //     for (const space of Object.values(spaces)) {
 //         for (const sku in space.skuCount) {
@@ -124,7 +124,7 @@ async function CheckExpressoCup(order: number) {
 //         'ENDULZANTESACHET': 10,
 //         'VASOCAFE': 10,
 //         'VASOCAFEDOBLE': 10,
-//         'VASOCAFEEXPRESO': 10,
+//         'VASOCAFEEXPRESSO': 10,
 //     };
 //     const missing_ingredients = getMissingIngredients(necessary_ingredients, available_ingredients);
 //     if (Object.keys(missing_ingredients).length > 0) {
