@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
             dueDate
         });
 
-        /* requestProducts({ sku: 'CAFEGRANO', quantity: 10}) */
+        /* requestProducts({ sku: 'CAFEGRANO', quantity: 10})
+
         const products = await getSpaceProducts(spaces.buffer.id, 'CAFEGRANO')
         if (!products) {
             throw new Error('No hay productos en el espacio checkOut');
@@ -44,16 +45,16 @@ export async function POST(req: NextRequest) {
         for (let i = 0; i < 40; i++) {
             await moveProduct(spaces.kitchen.id, cups[i]._id)
         }
-        await sleep(130000)
+        await sleep(130000) */
 
-        await requestProducts({ sku: 'CAFEEXPRESSO', quantity: 40})
+        await requestProducts({ sku: 'CAFEEXPRESSO', quantity: 90})
         
         await sleep(60000)
         const expresos = await getSpaceProducts(spaces.kitchen.id, 'CAFEEXPRESSO')
         if (!expresos) {
             throw new Error('No hay productos en el espacio checkOut');
         }
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 90; i++) {
             await moveProduct(spaces.checkOut.id, expresos[i]._id)
         }
 
