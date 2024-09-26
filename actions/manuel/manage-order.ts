@@ -103,7 +103,7 @@ async function whatDoINeed(order: IOrder) {
         'LECHEENTERAPORCION': 0,
         'VASOCAFE': 0,
         'VASOCAFEDOBLE': 0,
-        'VASOCAFEEXPRESSO': 0,
+        'VASOCAFEEXPRESO': 0,
     };
 
     for (const product of order.products) {
@@ -124,7 +124,7 @@ async function whatDoIHave() {
         'LECHEENTERAPORCION': spaces.kitchen.skuCount['LECHEENTERAPORCION'] || 0,
         'VASOCAFE': spaces.kitchen.skuCount['VASOCAFE'] || 0,
         'VASOCAFEDOBLE': spaces.kitchen.skuCount['VASOCAFEDOBLE'] || 0,
-        'VASOCAFEEXPRESSO': spaces.kitchen.skuCount['VASOCAFEEXPRESSO'] || 0,
+        'VASOCAFEEXPRESO': spaces.kitchen.skuCount['VASOCAFEEXPRESO'] || 0,
     };
 
     console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
@@ -245,8 +245,7 @@ async function cookAndDeliver(order: IOrder) {
                 console.log(response)
                 return;
             }
-            await waitForProductAvailability(response);
-            /* await waitARequestedProduct(product.sku, product.quantity, "kitchen"); */
+            await waitARequestedProduct(product.sku, product.quantity, "kitchen");
             await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.kitchen, destiny: spaces.checkOut });
         }
         const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
@@ -274,7 +273,7 @@ function sleep(ms: number): Promise<void> {
 async function waitARequestedProduct(sku: string, quantity: number, spaceName: string) {
     const product = await Product.findOne({sku: sku});
     const waitTime = product.production.time*1000*60+1000;
-    console.log('Esperando ',waitTime, ' ...')
+    console.log('Esperando ',waitTime / 1000, 'segundos ...')
 
     await sleep(waitTime);
 
@@ -283,7 +282,7 @@ async function waitARequestedProduct(sku: string, quantity: number, spaceName: s
     let count = space.skuCount[sku] || 0;
     let attempts = 0
     console.log('Cantidad de', sku, 'en', spaceName, ':', count)
-    while (count < quantity && attempts < 12) {
+    while (count < quantity) {
         console.log('Esperando ', product.sku, ' ... intento ', attempts)
         await sleep(30*1000)
         spaces = await getSpaces();

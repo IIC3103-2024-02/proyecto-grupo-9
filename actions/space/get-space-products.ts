@@ -17,7 +17,8 @@ export async function getSpaceProducts(storeId: string, sku: string) {
         const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/products?sku=${sku}`,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    'Cache-Control': 'no-store'
                 }
             }
         );

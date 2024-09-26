@@ -13,8 +13,8 @@ export async function waitForProductAvailability(response: requestProductInterfa
         await connectDB()
         const product = await Product.findOne({ sku: response.sku})
 
-        /* const waitTime = product.production.time * response.quantity * 60000 */// Time difference in milliseconds
-        const waitTime = availableAt.getTime() - createdAt.getTime() + 60000;
+        const waitTime = product.production.time * response.quantity * 60000 /// Time difference in milliseconds
+        /* const waitTime = availableAt.getTime() - createdAt.getTime() + 60000; */
 
         if (waitTime > 0) {
             console.log('--------------------------------')
