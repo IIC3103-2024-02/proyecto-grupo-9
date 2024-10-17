@@ -7,7 +7,7 @@ import Product, { IProduct } from "@/models/Product";
 export async function getProducts() {
     try {
         await connectDB();
-        const res = await axios.get(`${process.env.API_URI}/products/available`);
+        const res = await axios.get(`${process.env.API_URI}/coffeeshop/products/available`);
         
         const products = res.data.map(async (productData: IProduct) => {
             const product = new Product(productData);

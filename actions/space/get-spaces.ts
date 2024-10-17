@@ -1,7 +1,7 @@
 
 
 import axios from "axios"
-import { fetchToken } from "@/lib/token"
+import { fetchToken } from "@/lib/coffeeshopToken"
 import { getProductCount } from "./get-product-count"
 
 interface Space {
@@ -36,13 +36,19 @@ export async function getSpaces() {
             console.log('Token not found');
             return {}; // Return an empty object if token is not found
         }
-        const res = await axios.get(`${process.env.API_URI}/spaces`, {
+        const res = await fetch(`${process.env.API_URI}/coffeeshop/spaces`, {
+            method: 'GET',
             headers: {
                 Authorization: `Bearer ${token}`,
-                'Cache-Control': 'no-store'
-            }
+            },
+            cache: 'no-store'
         });
-        const spaces = res.data as Space[];
+
+        if (!res.ok) {
+            throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+        }
+
+        const spaces = await res.json() as unknown as Space[];
         const data: SpaceDictionary = {};
 
         for (const space of spaces) {

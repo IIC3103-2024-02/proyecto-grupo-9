@@ -1,7 +1,7 @@
 'use server'
 
 import axios from "axios"
-import { fetchToken } from "@/lib/token"
+import { fetchToken } from "@/lib/coffeeshopToken"
 
 export interface requestProductInterface {
     _id: string;
@@ -17,7 +17,7 @@ export interface requestProductInterface {
 export async function requestProducts({ sku, quantity }: { sku: string, quantity: number }) {
     try {
         const token = await fetchToken();
-        const res = await axios.post(`${process.env.API_URI}/products`,
+        const res = await axios.post(`${process.env.API_URI}/coffeeshop/products`,
             {
                 "sku": sku,
                 "quantity": quantity

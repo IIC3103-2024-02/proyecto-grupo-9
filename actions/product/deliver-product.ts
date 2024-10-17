@@ -1,25 +1,31 @@
 'use server'
 
-import axios from "axios"
-import { fetchToken } from "@/lib/token"
+import { fetchToken } from "@/lib/coffeeshopToken"
 
 export async function deliverProduct(orderId: string, productId: string) {
     try {
         const token = await fetchToken();
-        console.log("Entregando producto ", productId, " en la orden ", orderId);
-        const res = await axios.post(`${process.env.API_URI}/dispatch`,
-            {
-                "orderId": orderId,
-                "productId": productId
+
+        const res = await fetch(`${process.env.API_URI}/coffeeshop/dispatch`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        );
-        console.log("Producto ", productId, " entregado exitosamente");
-        return res.data;
+            body: JSON.stringify({
+                orderId: orderId,
+                productId: productId,
+            }),
+        });
+
+        if (!res.ok) {
+            throw new Error(`Failed to dispatch product: ${res.status} ${res.statusText}`);
+        }
+
+        const data = await res.json();
+    
+        return data;
+
     } catch (error: any) {
         if (error.response) {
             // Print the entire error response body

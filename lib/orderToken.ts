@@ -3,12 +3,12 @@
 import axios from "axios";
 import { jwtDecode } from 'jwt-decode';
 
-let token: string | null = null;
-let tokenExpirationTime: number | undefined;
+let orderToken: string | null = null;
+let orderTokenExpirationTime: number | undefined;
 
-export async function fetchToken() {
+export async function getOrderToken() {
     try {
-        if (!token || (tokenExpirationTime && Date.now() / 1000 >= tokenExpirationTime)) {
+        if (!orderToken || (orderTokenExpirationTime && Date.now() / 1000 >= orderTokenExpirationTime)) {
             const url = process.env.API_URI;
             const secret = process.env.API_SECRET;
             const group = 9
@@ -18,7 +18,7 @@ export async function fetchToken() {
                 "secret": secret
             };
 
-            const res = await axios.post(`${url}/auth`, 
+            const res = await axios.post(`${url}/ordenes-compra/autenticar`, 
                 requestBody,
                 {
                     headers: {
@@ -28,18 +28,18 @@ export async function fetchToken() {
             );
 
             const data = res.data;
-            token = data.token; // Store the token
+            orderToken = data.token; // Store the token
             
-            if (token) {
-                const decodedToken = jwtDecode(token);
-                tokenExpirationTime = decodedToken.exp
+            if (orderToken) {
+                const decodedToken = jwtDecode(orderToken);
+                orderTokenExpirationTime = decodedToken.exp
                 // Print the decoded token
             }
         }
-        if (!token) {
+        if (!orderToken) {
             console.log('token not found')
         }
-        return token;
+        return orderToken;
     } catch (error: any) {  
         console.log(error.message);
         return null;
