@@ -12,59 +12,65 @@ import { getSpaces } from "@/actions/space/get-spaces";
 import sleep from "@/actions/manuel/manage-order";
 
 
-export async function POST(req: NextRequest) {
-    try {
-        await connectDB();
+// export async function POST(req: NextRequest) {
+//     try {
+//         await connectDB();
 
 
-        const data = await req.json();
-        console.log(data)
-        const { id, order, dueDate } = data;
-        const spaces = await getSpaces();
-        const o = await Order.create({
-            _id: id,
-            products: order,
-            dueDate
-        });
+//         const data = await req.json();
+//         const { id, order, dueDate } = data;
+//         const spaces = await getSpaces();
 
-        /* requestProducts({ sku: 'CAFEGRANO', quantity: 10}) */
-        const products = await getSpaceProducts(spaces.buffer.id, 'CAFEGRANO')
-        if (!products) {
-            throw new Error('No hay productos en el espacio checkOut');
-        }
-        for (let i = 0; i < 2; i++) {
-            await moveProduct(spaces.kitchen.id, products[i]._id)
-        }
-        await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: 40})
+//         requestProducts({ sku: 'VASOCAFEDOBLE', quantity: 10})
 
-        const cups = await getSpaceProducts(spaces.buffer.id, 'VASOCAFEEXPRESO')
-        if (!cups) {
-            throw new Error('No hay productos en el espacio checkOut');
-        }
-        for (let i = 0; i < 40; i++) {
-            await moveProduct(spaces.kitchen.id, cups[i]._id)
-        }
-        await sleep(130000)
+//         const coffe = await getSpaceProducts(spaces.buffer.id, 'CAFEGRANO', 3)
+//         if (!coffe) {
+//             throw new Error('No hay productos en el espacio checkOut');
+//         }
+//         for (let i = 0; i < coffe.length; i++) {
+//             await moveProduct(spaces.kitchen.id, coffe[i]._id)
+//         }
+//         await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: 60})
 
-        await requestProducts({ sku: 'CAFEEXPRESSO', quantity: 40})
+//         const cups = await getSpaceProducts(spaces.buffer.id, 'VASOCAFEEXPRESO', 10)
+//         if (!cups) {
+//             throw new Error('No hay productos en el espacio checkOut');
+//         }
+//         for (let i = 0; i < cups.length; i++) {
+//             await moveProduct(spaces.kitchen.id, cups[i]._id)
+//         }
+       
+//         const milk = await getSpaceProducts(spaces.buffer.id, 'LECHEENTERA', 5)
+//         if (!milk) {
+//             throw new Error('No hay productos en el espacio checkOut');
+//         }
+//         for (let i = 0; i < milk.length; i++) {
+//             await moveProduct(spaces.kitchen.id, milk[i]._id)
+//         }
+//         await requestProducts({ sku: 'LECHEENTERAPORCION', quantity: 60})
+
+//         await sleep(130000)
+
+//         await requestProducts({ sku: 'CAFEEXPRESSODOBLE', quantity: 10}) 
         
-        await sleep(60000)
-        const expresos = await getSpaceProducts(spaces.kitchen.id, 'CAFEEXPRESSO')
-        if (!expresos) {
-            throw new Error('No hay productos en el espacio checkOut');
-        }
-        for (let i = 0; i < 40; i++) {
-            await moveProduct(spaces.checkOut.id, expresos[i]._id)
-        }
+//         await sleep(1000*100)
+//         const expresos = await getSpaceProducts(spaces.kitchen.id, 'CAFEEXPRESSODOBLE', 10)
+//         console.log(expresos?.length)
+//         if (!expresos) {
+//             throw new Error('No hay productos en el espacio checkOut');
+//         }
+//         for (let i = 0; i < expresos.length; i++) {
+//             await moveProduct(spaces.checkOut.id, expresos[i]._id)
+//         }
 
 
-        return NextResponse.json({
-            status: 'trabajando en 40 expresos acuerdate de mantener el stock'
-        }, {status: 200});
+//         return NextResponse.json({
+//             status: 'trabajando en 40 expresos acuerdate de mantener el stock'
+//         }, {status: 200});
         
-    } catch (error) {
-        return NextResponse.json({
-            error: (error as Error).message
-        }, {status: 500});
-    }
-}
+//     } catch (error) {
+//         return NextResponse.json({
+//             error: (error as Error).message
+//         }, {status: 500});
+//     }
+// }

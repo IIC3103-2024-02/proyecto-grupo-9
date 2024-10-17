@@ -15,7 +15,7 @@ interface Space {
     usedSpace: number;
 }
 
-interface SpaceDictionary {
+export interface SpaceDictionary {
     [key: string]: SpaceData;
 }
 
