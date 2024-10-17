@@ -1,7 +1,7 @@
 'use server'
 
 import axios from "axios"
-import { fetchToken } from "@/lib/token"
+import { fetchToken } from "@/lib/coffeeshopToken"
 
 interface getSpaceProducts {
     _id: string;
@@ -14,15 +14,20 @@ export async function getSpaceProducts(storeId: string, sku: string, limit: numb
     try {
         const token = await fetchToken();
 
-        const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/products?sku=${sku}&limit=${limit}`,
-            {
+        const res = await fetch(`${process.env.API_URI}/coffeeshop/spaces/${storeId}/products?sku=${sku}&limit=${limit}`,
+            {   
+                method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Cache-Control': 'no-store'
-                }
+                },
+                cache: 'no-store'
             }
         );
-        const products = res.data;
+
+        if (!res.ok) {
+            throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+        }
+        const products = await res.json();
 
         // order data by expiration date
         products.sort((a: getSpaceProducts, b: getSpaceProducts) => {

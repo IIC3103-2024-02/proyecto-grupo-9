@@ -1,23 +1,26 @@
 
 
-import { fetchToken } from "@/lib/token";
-import axios from "axios"
+import { fetchToken } from "@/lib/coffeeshopToken";
 
 export const revalidate = 0;
 
 export async function getProductCount(storeId: string) {
     try {
         const token = await fetchToken();
-        const res = await axios.get(`${process.env.API_URI}/spaces/${storeId}/inventory`,
-            {
+        const res = await fetch(`${process.env.API_URI}/coffeeshop/spaces/${storeId}/inventory`,
+            {   
+                method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Cache-Control': 'no-store'
-                }
+                },
+                cache: 'no-store'
             }
         );
         
-        return res.data;
+        if (!res.ok) {
+            throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+        }
+        return await res.json();
     } catch (error: any) {
         //onsole.log(error);
         console.log("Error al solicitar conteo de productos en ", storeId);

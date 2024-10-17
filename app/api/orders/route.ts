@@ -9,11 +9,10 @@ import { NextResponse, NextRequest } from 'next/server';
 export async function POST(req: NextRequest) {
     try {
         await connectDB();
-
-
         const data = await req.json();
-        console.log(data)
         const { id, order, dueDate } = data;
+
+        
 
         const o = await Order.create({
             _id: id,
