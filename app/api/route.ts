@@ -8,8 +8,9 @@ export const revalidate = 0;
 
 export async function GET() {
     /* const products = await getProducts(); */
-    const spaces = await getSpaces();
+    /* const spaces = await getSpaces(); */
     
+    /* monitorDirectory('/pedidos'); */
 
-    return NextResponse.json(spaces, { status: 200 });
+    return NextResponse.json( { status: 200 });
 }
