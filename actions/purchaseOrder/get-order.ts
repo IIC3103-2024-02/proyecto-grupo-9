@@ -11,7 +11,7 @@ export interface ApiOrder {
     sku: string;
     cantidad: number;
     despachado: number;
-    estado: string;
+    estado: "creada" | "aceptada" | "rechazada" | "anulada" | "vencida" | "cumplida";
     historial: [{
         nombre: string;
         fecha: Date;
