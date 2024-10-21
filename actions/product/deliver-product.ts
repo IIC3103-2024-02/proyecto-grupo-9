@@ -23,7 +23,6 @@ export async function deliverProduct(orderId: string, productId: string) {
         }
 
         const data = await res.json();
-    
         return data;
 
     } catch (error: any) {

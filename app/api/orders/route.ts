@@ -1,7 +1,7 @@
 'use server'
 
-import { makeOrder } from "@/actions/order/make-order";
-import { manageOrder } from "@/actions/manuel/manage-order";
+import { makeOrder } from "@/actions/order-malo/make-order";
+import { manageOrder } from "@/actions/order/manage-order";
 import connectDB from "@/lib/db"
 import Order from "@/models/Order"
 import { NextResponse, NextRequest } from 'next/server';
@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
         const data = await req.json();
         const { id } = data;
 
+<<<<<<< HEAD
+=======
         const order = await getOrder({ orderId: id });
         
         if (!order) {
@@ -22,6 +24,7 @@ export async function POST(req: NextRequest) {
             }, { status: 404 });
         }
 
+>>>>>>> feat/buy-orders
         const o = await Order.create({
             _id: id,
             products: {
