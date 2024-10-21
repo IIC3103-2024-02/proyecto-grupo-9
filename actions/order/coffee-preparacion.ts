@@ -7,30 +7,31 @@ import { getSpaceProducts } from "../space/get-space-products";
 import { moveManyIngredients } from "./move-ingedients";
 import Order, { IOrder } from "@/models/Order";
 import Product from "@/models/Product";
+import { updateOrder } from "../purchaseOrder/update-order";
 
 
 export async function splitMilk() {
-    console.log('Separando leche')
     const spaces = await getSpaces();
     const n_wholeMilk = spaces.kitchen.skuCount['LECHEENTERA'] || 0;
     if (n_wholeMilk > 0) {
+        console.log('Separando leche')
         await requestProducts({ sku: 'LECHEENTERAPORCION', quantity: n_wholeMilk * 12 });
         await waitARequestedProduct('LECHEENTERAPORCION', 12, "kitchen");
     }
 }
 
 export async function grindCoffee() {
-    console.log('Moliendo café')
     const spaces = await getSpaces();
     const n_CoffeeBeans = spaces.kitchen.skuCount['CAFEGRANO'] || 0;
     if (n_CoffeeBeans > 0) {
+        console.log('Moliendo café')
         await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: n_CoffeeBeans * 20 });
         await waitARequestedProduct('CAFEMOLIDOPORCION', 20, "kitchen");
     }
 }
 
-export async function cookAndDeliver(order: IOrder) {
-    console.log('Cocinando y entregando')
+export async function cook(order: IOrder) {
+    console.log('Cocinando... ')
     const spaces = await getSpaces();
     for (const product of order.products) {
         if (product.sku !== 'ENDULZANTESACHET' && product.sku !== 'AZUCARSACHET') {
@@ -43,21 +44,28 @@ export async function cookAndDeliver(order: IOrder) {
             await waitARequestedProduct(product.sku, product.quantity, "kitchen");
             await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: spaces.kitchen, destiny: spaces.checkOut });
         }
+    }
+}
+
+export async function deliver(order: IOrder) {
+    console.log('Entregando productos...')
+    const spaces = await getSpaces();
+    for (const product of order.products) {
         const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
-        if (readyProducts) {
+        console.log("\tready products: ", readyProducts)
+        if (readyProducts && readyProducts.length >= product.quantity) {
             for (let i = 0; i < product.quantity; i++) {
                 await deliverProduct(order._id, readyProducts[i]._id);
             }
-            markOrderAsDone(order._id);
         } else {
-            console.log('No ready products found in checkOut');
+            console.log('Not enough ready products found in checkOut');
         }
     }
 }
 
-async function markOrderAsDone(orderId: string) {
+export async function markOrderAsDone(orderId: string) {
     const order = await Order.findById(orderId);
-    order.status = 'ready';
+    order.status = 'delivered';
     await order.save();
 }
 
@@ -78,7 +86,7 @@ async function waitARequestedProduct(sku: string, quantity: number, spaceName: s
     let attempts = 0
     console.log('Cantidad de', sku, 'en', spaceName, ':', count)
     while (count < quantity) {
-        console.log('Esperando ', product.sku, ' ... intento ', attempts)
+        console.log('Esperando ', product.sku, '... intento ', attempts)
         await sleep(30*1000)
         spaces = await getSpaces();
         space = spaces[spaceName];

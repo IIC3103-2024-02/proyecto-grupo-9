@@ -13,8 +13,8 @@ export async function deliverProduct(orderId: string, productId: string) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                orderId: orderId,
                 productId: productId,
+                orderId: orderId,
             }),
         });
 
@@ -33,6 +33,7 @@ export async function deliverProduct(orderId: string, productId: string) {
             // If no response, print the general error message
             console.log('Error message:', error.message);
         }
+        console.error(error);
         console.log('Error al entregar producto ', productId, ' en la orden ', orderId);
         return null;
         

@@ -4,13 +4,13 @@ import { getSpaces } from "../space/get-spaces";
 import { requestProducts } from "../product/request-products";
 
 const products = [
-    { sku: 'CAFEGRANO', threshold: 20, quantity: 20 },
+    { sku: 'CAFEGRANO', threshold: 10, quantity: 20 },
     { sku: 'LECHEENTERA', threshold: 6, quantity: 12 },
     { sku: 'AZUCARSACHET', threshold: 30, quantity: 100 },
     { sku: 'ENDULZANTESACHET', threshold: 30, quantity: 100 },
     { sku: 'VASOCAFE', threshold: 20, quantity: 100 },
     { sku: 'VASOCAFEDOBLE', threshold: 20, quantity: 80 },
-    { sku: 'VASOCAFEEXPRESSO', threshold: 20, quantity: 120 },
+    { sku: 'VASOCAFEEXPRESO', threshold: 20, quantity: 120 },
 ];
 
 async function stockUp() {
@@ -34,6 +34,7 @@ async function stockUp() {
 
 // Function to start the interval
 export function startStockCheckInterval(intervalMinutes = 30) {
+    stockUp();
     const intervalMs = intervalMinutes * 60 * 1000;
     console.log(`Iniciando intervalo de verificación de stock cada ${intervalMinutes} minutos`);
     return setInterval(stockUp, intervalMs);

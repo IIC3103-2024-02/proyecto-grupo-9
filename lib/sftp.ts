@@ -1,5 +1,6 @@
 'use server'
 
+import sleep from '@/actions/order/coffee-preparacion';
 import { getOrder } from '@/actions/purchaseOrder/get-order';
 import axios from 'axios';
 import Client from 'ssh2-sftp-client';
@@ -40,7 +41,7 @@ export async function monitorDirectory(remoteDir: string): Promise<void> {
   
         setInterval(async () => {
             await checkDirectory(remoteDir);
-        }, 300000); // Poll directory every 5 minutes
+        }, 20 * 60 * 1000); // Poll directory every 5 minutes
     } catch (error) {
         console.error('SFTP connection error:', error);
     }
@@ -57,19 +58,20 @@ async function checkDirectory(remoteDir: string) {
             const order = await getOrder({ orderId: parsedContent.order.id });
 
             if (order?.estado === 'vencida') {
-                console.log(`Order ${order.id} has expired. Deleting file ${file.name}`);
+                /* console.log(`Order ${order.id} has expired. Deleting file ${file.name}`); */
                 await sftp.delete(`${remoteDir}/${file.name}`);
             } else if (order?.estado === 'creada') {
-                /* await axios.post('api/orders', {
+                /* await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
                     id: order.id,
                     order: parsedContent.order.sku,
                     dueDate: order.vencimiento
                 }) */
+                await sleep(20000);
                 console.log(`Order ${order?.id} has been sended to the API`);
             } else {
                 /* console.log(`Order ${order?.id} has already been processed`); */
             }
         }
     }
-    console.log('Polling directory again in 5 minutes...');
+    console.log('Polling directory again in 20 minutes...');
 }
