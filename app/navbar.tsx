@@ -18,6 +18,9 @@ export default function Navbar() {
                             <Link href="/web" className={`block py-2 px-3  ${pathname === '/web' ? 'text-blue-500' : 'text-white'} `} aria-current="page">Home</Link>
                         </li>
                         <li>
+                            <Link href="/web/form" className={`block py-2 px-3  ${pathname === '/web/form' ? 'text-blue-500' : 'text-white'} `} aria-current="page">Form</Link>
+                        </li>
+                        <li>
                             <Link href="/web/orders" className={`block py-2 px-3  ${pathname === '/web/orders' ? 'text-blue-500' : 'text-white'} `} aria-current="page">Pedidos</Link>
                         </li>
                                 
