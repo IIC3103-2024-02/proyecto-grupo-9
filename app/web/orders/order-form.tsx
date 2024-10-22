@@ -14,6 +14,7 @@ const FloatingForm = () => {
       const [quantity, setQuantity] = useState('');
       const [vencimiento] = useState(new Date(Date.now() + 24 * 60 * 60 * 1000));// vence en 24 horas
       const [successMessage, setSuccessMessage] = useState('');
+      const [errorMessage, setErrorMessage] = useState('');
 
     
       const handleSkuChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -35,27 +36,33 @@ const FloatingForm = () => {
         const errors = {
           sku: !sku,
           group: !group,
-          quantity: !quantity || parseInt(quantity, 10) <= 0,
+          quantity: !quantity 
         };
         setShowError(errors);
     
         if (!errors.sku && !errors.group && !errors.quantity) {
+          setSuccessMessage(''); 
+          setErrorMessage('');
+          console.log('crear orden');
+
           try {
             const response = await createOrder({
-              cliente: '9', 
+              cliente: "9", 
               proveedor: group, 
               sku: sku,
-              cantidad: parseInt(quantity, 10),
-              vencimiento: vencimiento, 
+              cantidad: Number(quantity),
+              vencimiento: vencimiento.toISOString(),
             });
-      
-          if (response && response.id) { 
+
+            if (response && response.id) { 
               setSuccessMessage(`Orden creada con éxito con ID = ${response.id}`); 
               console.log('Orden creada exitosamente', response);
-          } else {
-              console.error('Error al crear la orden');
-          }
-          } catch (error) {
+            } else {
+              setErrorMessage('Error al crear la orden');
+            }
+          } 
+          catch (error) {
+            setErrorMessage('Error al crear la orden');
             console.error('Error:', error);
           }
         }
@@ -154,8 +161,12 @@ const FloatingForm = () => {
                 {showError.group && <span className="text-sm text-red-600">Group is required</span>}
               </div>
 
-              {/* Mensaje de orden creada con éxito */}
+              {/* Mensaje de éxito */}
               {successMessage && <div className="mb-5 text-green-600">{successMessage}</div>}
+
+              {/* Mensaje de error */}
+              {errorMessage && <div className="mb-5 text-red-600">{errorMessage}</div>}
+
     
               {/* Submit Button */}
               <button
