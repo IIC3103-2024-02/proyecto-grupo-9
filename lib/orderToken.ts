@@ -7,10 +7,10 @@ let orderToken: string | null = null;
 let orderTokenExpirationTime: number | undefined;
 
 export async function getOrderToken() {
+    console.log('obtener token')
     try {
         if (!orderToken || (orderTokenExpirationTime && Date.now() / 1000 >= orderTokenExpirationTime)) {
-            const url = process.env.API_URI;
-            const secret = process.env.API_SECRET;
+            const secret = 'C4Vy$gumPZrws9!qfM6N>a#U';
             const group = 9
 
             const requestBody = {
@@ -18,7 +18,7 @@ export async function getOrderToken() {
                 "secret": secret
             };
 
-            const res = await axios.post(`${url}/ordenes-compra/autenticar`, 
+            const res = await axios.post(`https://dev.proyecto.2024-2.tallerdeintegracion.cl/ordenes-compra/autenticar`, 
                 requestBody,
                 {
                     headers: {
@@ -33,6 +33,8 @@ export async function getOrderToken() {
             if (orderToken) {
                 const decodedToken = jwtDecode(orderToken);
                 orderTokenExpirationTime = decodedToken.exp
+                console.log('token obtenido exitosamente')
+                console.log({orderToken})
                 // Print the decoded token
             }
         }

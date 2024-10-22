@@ -8,7 +8,7 @@ interface createOrderProps {
     proveedor: string;
     sku: string;
     cantidad: number;
-    vencimiento: Date;
+    vencimiento: string;
 }
 
 export async function createOrder({ cliente, proveedor, sku, cantidad, vencimiento }: createOrderProps) {
@@ -21,7 +21,7 @@ export async function createOrder({ cliente, proveedor, sku, cantidad, vencimien
             cantidad: cantidad,
             vencimiento: vencimiento
         }
-        const res = await fetch(`${process.env.API_URI}/ordenes-compra/ordenes`, {
+        const res = await fetch(`https://dev.proyecto.2024-2.tallerdeintegracion.cl/ordenes-compra/ordenes`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,
