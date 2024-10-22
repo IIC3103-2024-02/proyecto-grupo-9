@@ -1,7 +1,7 @@
 'use server'
 
-import { makeOrder } from "@/actions/order/make-order";
-import { manageOrder } from "@/actions/manuel/manage-order";
+import { makeOrder } from "@/actions/order-malo/make-order";
+import { manageOrder } from "@/actions/order/manage-order";
 import connectDB from "@/lib/db"
 import Order from "@/models/Order"
 import { NextResponse, NextRequest } from 'next/server';
@@ -9,7 +9,7 @@ import { requestProducts } from "@/actions/product/request-products";
 import { moveProduct } from "@/actions/product/move-product";
 import { getSpaceProducts } from "@/actions/space/get-space-products";
 import { getSpaces } from "@/actions/space/get-spaces";
-import sleep from "@/actions/manuel/manage-order";
+import sleep from "@/actions/order/manage-order";
 
 
 // export async function POST(req: NextRequest) {

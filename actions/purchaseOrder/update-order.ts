@@ -2,11 +2,11 @@
 
 import { getOrderToken } from "@/lib/orderToken";
 
-export async function updateOrder({orderId, estado}: {orderId: string, estado: string }) {
+export async function updateOrder({orderId, status}: {orderId: string, status: string }) {
     try {
         const token = await getOrderToken();
         const body = {
-            estado: estado
+            estado: status
         }
         const res = await fetch(`${process.env.API_URI}/ordenes-compra/ordenes/${orderId}/estado`, {
             method: "POST",

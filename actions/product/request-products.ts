@@ -27,7 +27,7 @@ export async function requestProducts({ sku, quantity }: { sku: string, quantity
                     Authorization: `Bearer ${token}`
                 }
             });
-        console.log("Solicitando productos ", sku, ": ", quantity);
+        console.log("Solicitando productos", sku, ":", quantity);
         return res.data as requestProductInterface;
     } catch (error: any) {
         console.log("Error al solicitar productos ", sku, ": ", quantity);
