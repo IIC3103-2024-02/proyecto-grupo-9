@@ -14,7 +14,7 @@ export async function deliverProduct(orderId: string, productId: string) {
             },
             body: JSON.stringify({
                 productId: productId,
-                orderId: orderId,
+                orderId: orderId
             }),
         });
 
@@ -22,8 +22,12 @@ export async function deliverProduct(orderId: string, productId: string) {
             throw new Error(`Failed to dispatch product: ${res.status} ${res.statusText}`);
         }
 
-        const data = await res.json();
-        return data;
+        if (res.status === 204) {
+            console.log('Producto entregado ', productId, ' en la orden ', orderId);
+            return;
+        }
+
+        return;
 
     } catch (error: any) {
         if (error.response) {

@@ -52,7 +52,6 @@ export async function deliver(order: IOrder) {
     const spaces = await getSpaces();
     for (const product of order.products) {
         const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
-        console.log("\tready products: ", readyProducts)
         if (readyProducts && readyProducts.length >= product.quantity) {
             for (let i = 0; i < product.quantity; i++) {
                 await deliverProduct(order._id, readyProducts[i]._id);
