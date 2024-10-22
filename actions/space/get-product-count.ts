@@ -32,7 +32,7 @@ export async function getProductCount(storeId: string) {
         return data ?? [];
         
     } catch (error: any) {
-        //onsole.log(error);
+        console.log(error);
         console.log("Error al solicitar conteo de productos en ", storeId);
         return null;
     }
