@@ -4,13 +4,13 @@ import { getSpaces } from "../space/get-spaces";
 import { requestProducts } from "../product/request-products";
 
 const products = [
-    { sku: 'CAFEGRANO', threshold: 10, quantity: 20 },
-    { sku: 'LECHEENTERA', threshold: 12, quantity: 12 },
+    { sku: 'CAFEGRANO', threshold: 10, quantity: 30 },
+    { sku: 'LECHEENTERA', threshold: 12, quantity: 24 },
     { sku: 'AZUCARSACHET', threshold: 30, quantity: 100 },
     { sku: 'ENDULZANTESACHET', threshold: 30, quantity: 100 },
-    { sku: 'VASOCAFE', threshold: 20, quantity: 100 },
-    { sku: 'VASOCAFEDOBLE', threshold: 20, quantity: 80 },
-    { sku: 'VASOCAFEEXPRESO', threshold: 20, quantity: 120 },
+    { sku: 'VASOCAFE', threshold: 30, quantity: 100 },
+    { sku: 'VASOCAFEDOBLE', threshold: 30, quantity: 80 },
+    { sku: 'VASOCAFEEXPRESO', threshold: 30, quantity: 120 },
 ];
 
 async function stockUp() {
