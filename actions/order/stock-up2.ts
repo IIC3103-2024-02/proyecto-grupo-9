@@ -5,7 +5,7 @@ import { requestProducts } from "../product/request-products";
 
 const products = [
     { sku: 'CAFEGRANO', threshold: 10, quantity: 20 },
-    { sku: 'LECHEENTERA', threshold: 6, quantity: 12 },
+    { sku: 'LECHEENTERA', threshold: 12, quantity: 12 },
     { sku: 'AZUCARSACHET', threshold: 30, quantity: 100 },
     { sku: 'ENDULZANTESACHET', threshold: 30, quantity: 100 },
     { sku: 'VASOCAFE', threshold: 20, quantity: 100 },
