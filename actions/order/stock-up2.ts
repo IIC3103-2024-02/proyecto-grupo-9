@@ -24,7 +24,7 @@ async function stockUp() {
 
     products.forEach(({ sku, threshold, quantity }) => {
         const totalStock =
-            (spaces.checkIn.skuCount[sku] || 0) + (spaces.buffer.skuCount[sku] || 0);
+            (spaces.checkIn.skuCount?.[sku] || 0) + (spaces.buffer?.skuCount?.[sku] || 0);
 
         if (totalStock < threshold) {
             requestProducts({ sku, quantity });

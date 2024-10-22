@@ -61,13 +61,13 @@ async function checkDirectory(remoteDir: string) {
                 /* console.log(`Order ${order.id} has expired. Deleting file ${file.name}`); */
                 await sftp.delete(`${remoteDir}/${file.name}`);
             } else if (order?.estado === 'creada') {
-                /* await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
+                await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
                     id: order.id,
                     order: parsedContent.order.sku,
                     dueDate: order.vencimiento
-                }) */
+                })
                 await sleep(20000);
-                console.log(`Order ${order?.id} has been sended to the API`);
+                /* console.log(`Order ${order?.id} has been sended to the API`); */
             } else {
                 /* console.log(`Order ${order?.id} has already been processed`); */
             }

@@ -75,6 +75,7 @@ export async function getSpaces() {
         return data;
     } catch (error: any) {
         console.log('Error al obtener los espacios');
+        console.error(error);
         return {}; // Return an empty object in case of error
     }
 }
