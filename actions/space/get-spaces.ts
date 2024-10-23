@@ -1,10 +1,9 @@
 
 
-import axios from "axios"
 import { fetchToken } from "@/lib/coffeeshopToken"
 import { getProductCount } from "./get-product-count"
 
-interface Space {
+export interface Space {
     _id: string;
     cold: boolean;
     buffer: boolean;
@@ -34,8 +33,9 @@ export async function getSpaces() {
         const token = await fetchToken();
         if (!token) {
             console.log('Token not found');
-            return {}; // Return an empty object if token is not found
+            return {};
         }
+
         const res = await fetch(`${process.env.API_URI}/coffeeshop/spaces`, {
             method: 'GET',
             headers: {
@@ -79,3 +79,5 @@ export async function getSpaces() {
         return {}; // Return an empty object in case of error
     }
 }
+
+
