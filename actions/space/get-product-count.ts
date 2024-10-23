@@ -1,5 +1,4 @@
 
-
 import { fetchToken } from "@/lib/coffeeshopToken";
 
 export const revalidate = 0;
@@ -22,7 +21,7 @@ export async function getProductCount(storeId: string) {
         }
         return await res.json();
     } catch (error: any) {
-        //onsole.log(error);
+        //console.log(error);
         console.log("Error al solicitar conteo de productos en ", storeId);
         return null;
     }
