@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { createOrder } from '@/actions/purchaseOrder/create-order';
+import axios from 'axios';
 
 const FloatingForm = () => {
     const [showError, setShowError] = useState({
@@ -57,6 +58,44 @@ const FloatingForm = () => {
             if (response && response.id) { 
               setSuccessMessage(`Orden creada con éxito con ID = ${response.id}`); 
               console.log('Orden creada exitosamente', response);
+
+              const orderDetails = {
+                id: response.id, // Suponiendo que response tiene un campo id
+                fechaEntrega: response.vencimiento, // Suponiendo que tienes esta fecha
+                items: [
+                    {
+                        sku: sku,
+                        cantidad: Number(quantity)
+                    }
+                ]
+            };
+
+            const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
+
+            try {
+              const res = await axios.post(apiUrl, orderDetails, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+              });
+  
+              if (res.status === 200) {
+                  const responseBody = res.data;
+                  console.log('Respuesta de la segunda solicitud:', responseBody);
+
+                  if (responseBody.status === 'aceptado') {
+                      alert('satutus: aceptada.');
+                  } else {
+                      alert('status: rechazada.');
+                  }
+              } else {
+                  console.error('Error en enviar la orden:', res.status);
+              }
+            } catch (error) {
+              console.error('Error al realizar la segunda solicitud:', error);
+              alert('Hubo un error al procesar la segunda solicitud.');
+            }
+
             } else {
               setErrorMessage('Error al crear la orden');
             }
@@ -67,6 +106,7 @@ const FloatingForm = () => {
           }
         }
       };
+
       return (
         <div className="min-h-screen bg-gray-100 p-0 sm:p-12">
           <div className="mx-auto max-w-md px-6 py-12 bg-white border-0 shadow-lg sm:rounded-3xl">
@@ -175,7 +215,7 @@ const FloatingForm = () => {
                 onClick={handleSubmit}
                 className="w-full px-6 py-3 mt-3 text-lg text-white transition-all duration-150 ease-linear rounded-lg shadow outline-none bg-blue-500 hover:bg-blue-600 hover:shadow-lg focus:outline-none"
               >
-                Crear Orden
+                Create Order
               </button>
             </form>
           </div>
