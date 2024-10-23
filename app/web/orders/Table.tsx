@@ -178,8 +178,8 @@ function ProductProgressChart({ order }:{ order?: IOrder }) {
                 type="line"
                 percent={progressFraction}
                 strokeColor={{
-                '0%': '#108ee9',
-                '100%': '#87d068',
+                    '0%': '#108ee9',
+                    '100%': '#87d068',
                 }}
                 status={progressFraction < 100 ? 'active' : 'success'}
             />
