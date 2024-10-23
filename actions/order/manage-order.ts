@@ -2,7 +2,6 @@
 
 import connectDB from "@/lib/db"
 import Order, {IOrder} from "@/models/Order"
-import { stockUp } from "./stock-up";
 import { setKitchen } from "./set-kitchen";
 import { moveSugarAndSweetener } from "./move-ingedients";
 import { splitMilk, grindCoffee, cook, deliver, markOrderAsDone } from "./coffee-preparacion";

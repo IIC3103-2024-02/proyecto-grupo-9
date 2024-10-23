@@ -35,7 +35,7 @@ async function stockUp() {
 }
 
 // Function to start the interval
-export function startStockCheckInterval(intervalMinutes = 20) {
+export async function startStockCheckInterval(intervalMinutes = 20) {
     stockUp();
     const intervalMs = intervalMinutes * 60 * 1000;
     console.log(`Iniciando intervalo de verificación de stock cada ${intervalMinutes} minutos`);

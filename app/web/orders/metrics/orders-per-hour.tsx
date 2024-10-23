@@ -28,7 +28,7 @@ function OrdersLineChart({ orders: o }: OrdersLineChartProps) {
     useEffect(() => {
     // Contamos las órdenes por hora
 
-        const ordersByHour: { [key: string]: number } = {};
+        const ordersByHour: { [key: string]: { delivered: number; rejected: number; accepted: number; passed: number } } = {};
 
         orders.forEach(order => {
             const hour = formatHour(order.createdAt.toString());
@@ -76,7 +76,6 @@ function OrdersLineChart({ orders: o }: OrdersLineChartProps) {
                     <Line type="monotone" dataKey="rejected" stroke="#82ca9d" name="Rejected Orders" />
                     <Line type="monotone" dataKey="accepted" stroke="#ffc658" name="Accepted Orders" />
                     <Line type="monotone" dataKey="passed" stroke="#ff7300" name="Passed Orders" />
-                </LineChart>
                 </LineChart>
             ) : (
                 <p>Cargando datos de orders...</p>
