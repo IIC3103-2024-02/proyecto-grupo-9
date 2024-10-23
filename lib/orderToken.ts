@@ -9,7 +9,6 @@ let orderTokenExpirationTime: number | undefined;
 export async function getOrderToken() {
     try {
         if (!orderToken || (orderTokenExpirationTime && Date.now() / 1000 >= orderTokenExpirationTime)) {
-            const url = process.env.API_URI;
             const secret = process.env.API_SECRET;
             const group = 9
 
@@ -18,7 +17,7 @@ export async function getOrderToken() {
                 "secret": secret
             };
 
-            const res = await axios.post(`${url}/ordenes-compra/autenticar`, 
+            const res = await axios.post(`${process.env.API_URI}/ordenes-compra/autenticar`, 
                 requestBody,
                 {
                     headers: {

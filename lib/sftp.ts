@@ -41,7 +41,7 @@ export async function monitorDirectory(remoteDir: string): Promise<void> {
   
         setInterval(async () => {
             await checkDirectory(remoteDir);
-        }, 20 * 60 * 1000); // Poll directory every 5 minutes
+        }, 5 * 60 * 1000); // Poll directory every 5 minutes
     } catch (error) {
         console.error('SFTP connection error:', error);
     }
@@ -57,7 +57,7 @@ async function checkDirectory(remoteDir: string) {
             const parsedContent = await parseStringPromise(content, { explicitArray: false });
             const order = await getOrder({ orderId: parsedContent.order.id });
 
-            if (order?.estado === 'vencida') {
+            if (order?.estado === 'vencida' || order?.estado === 'cumplida' || order?.estado === 'anulada' || order?.estado === 'rechazada') {
                 /* console.log(`Order ${order.id} has expired. Deleting file ${file.name}`); */
                 await sftp.delete(`${remoteDir}/${file.name}`);
             } else if (order?.estado === 'creada') {
@@ -68,10 +68,8 @@ async function checkDirectory(remoteDir: string) {
                 })
                 await sleep(20000);
                 /* console.log(`Order ${order?.id} has been sended to the API`); */
-            } else {
-                /* console.log(`Order ${order?.id} has already been processed`); */
             }
         }
     }
-    console.log('Polling directory again in 20 minutes...');
+    console.log('Polling directory again in 5 minutes...');
 }
