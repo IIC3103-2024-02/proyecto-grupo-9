@@ -3,6 +3,7 @@
 import { IOrder } from "@/models/Order";
 import Product from "@/models/Product";
 import { getSpaces } from "../space/get-spaces";
+import { getSpaceCountByName } from "../space/get-count-by-name";
 import { moveManyIngredients } from "./move-ingedients";
 
 
@@ -44,14 +45,14 @@ async function whatDoINeed(order: IOrder) {
 }
 
 async function whatDoIHave() {
-    const spaces = await getSpaces();
+    const kitchen = await getSpaceCountByName('kitchen');
 
     const available_ingredients: Record<string, number> = {
-        'CAFEMOLIDOPORCION': spaces.kitchen.skuCount['CAFEMOLIDOPORCION'] || 0,
-        'LECHEENTERAPORCION': spaces.kitchen.skuCount['LECHEENTERAPORCION'] || 0,
-        'VASOCAFE': spaces.kitchen.skuCount['VASOCAFE'] || 0,
-        'VASOCAFEDOBLE': spaces.kitchen.skuCount['VASOCAFEDOBLE'] || 0,
-        'VASOCAFEEXPRESO': spaces.kitchen.skuCount['VASOCAFEEXPRESO'] || 0,
+        'CAFEMOLIDOPORCION': kitchen?.['CAFEMOLIDOPORCION'] || 0,
+        'LECHEENTERAPORCION': kitchen?.['LECHEENTERAPORCION'] || 0,
+        'VASOCAFE': kitchen?.['VASOCAFE'] || 0,
+        'VASOCAFEDOBLE': kitchen?.['VASOCAFEDOBLE'] || 0,
+        'VASOCAFEEXPRESO': kitchen?.['VASOCAFEEXPRESO'] || 0,
     };
 
     console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
@@ -83,18 +84,16 @@ async function getMissingIngredients(necessary_ingredients: Record<string, numbe
 }
 
 async function requestIngredientsToBuffer(missing_ingredients: Record<string, number>) {
-    const spaces = await getSpaces();
     for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: spaces.buffer, destiny: spaces.kitchen });
+        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "buffer", destiny: "kitchen" });
         missing_ingredients[ingredient] -= units;
     }
     return missing_ingredients;
 }
 
 async function requestIngredientsToCheckIn(missing_ingredients: Record<string, number>) {
-    const spaces = await getSpaces();
     for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: spaces.checkIn, destiny: spaces.kitchen });
+        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "checkIn", destiny: "kitchen" });
         missing_ingredients[ingredient] -= units;
     }
     return missing_ingredients;
