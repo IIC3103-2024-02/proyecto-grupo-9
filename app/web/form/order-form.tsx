@@ -60,41 +60,35 @@ const FloatingForm = () => {
               console.log('Orden creada exitosamente', response);
 
               const orderDetails = {
-                id: response.id, // Suponiendo que response tiene un campo id
-                fechaEntrega: response.vencimiento, // Suponiendo que tienes esta fecha
-                items: [
-                    {
-                        sku: sku,
-                        cantidad: Number(quantity)
-                    }
-                ]
-            };
-
-            const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
-
-            try {
-              const res = await axios.post(apiUrl, orderDetails, {
-                  headers: {
-                      'Content-Type': 'application/json',
-                  },
-              });
-  
-              if (res.status === 200) {
-                  const responseBody = res.data;
-                  console.log('Respuesta de la segunda solicitud:', responseBody);
-
-                  if (responseBody.status === 'aceptado') {
-                      alert('satutus: aceptada.');
-                  } else {
-                      alert('status: rechazada.');
+                id: response.id, 
+                order: [
+                  {
+                  sku: sku,
+                  quantity: Number(quantity)
                   }
-              } else {
-                  console.error('Error en enviar la orden:', res.status);
+                ],
+                dueDate: response.vencimiento
+              };
+              console.log('Order details:', orderDetails);
+              const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
+  
+              try {
+                const res = await axios.post(apiUrl, orderDetails, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (res.status >= 200 && res.status < 300) {
+                    const responseBody = res.data;
+                    console.log('Response:', responseBody);
+  
+                } else {
+                    console.error('Error en enviar la orden:', res.status);
+                }
+              } catch (error) {
+                console.error('Error al realizar la segunda solicitud:', error);
+                alert('Hubo un error al procesar la segunda solicitud.');
               }
-            } catch (error) {
-              console.error('Error al realizar la segunda solicitud:', error);
-              alert('Hubo un error al procesar la segunda solicitud.');
-            }
 
             } else {
               setErrorMessage('Error al crear la orden');
