@@ -77,7 +77,6 @@ function OrdersLineChart({ orders: o }: OrdersLineChartProps) {
                     <Line type="monotone" dataKey="accepted" stroke="#ffc658" name="Accepted Orders" />
                     <Line type="monotone" dataKey="passed" stroke="#ff7300" name="Passed Orders" />
                 </LineChart>
-                </LineChart>
             ) : (
                 <p>Cargando datos de orders...</p>
             )}
