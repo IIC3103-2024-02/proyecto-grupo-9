@@ -1,9 +1,9 @@
-'use client';
+'use server';
 
-import { useEffect, useState } from 'react';
-import FloatingForm from './order-form';
+import FloatingForm from "./order-form";
 
-export default function Page() {
+export default async function Page() {
+
     return (
         <div>
             <FloatingForm />

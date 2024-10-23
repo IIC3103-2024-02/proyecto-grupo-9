@@ -21,7 +21,6 @@ export async function moveProduct(storeId: string, productId: string) {
             throw new Error(`Error ${res.status}: ${res.statusText}`);
         }
   
-        console.log("Se movió el producto", productId, "al espacio", storeId);
         return await res.json(); // Parse response data
     } catch (error: any) {
         console.log("Error al mover producto", productId, "al espacio", storeId);

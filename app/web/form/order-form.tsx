@@ -131,7 +131,7 @@ const FloatingForm = () => {
                   <option value="LECHEENTERA">LECHEENTERA</option>
                   <option value="LECHEENTERAPORPORCION">LECHEENTERAPORCION</option>
                   <option value="CAFELATTE">CAFELATTE</option>
-                  <option value="CAFELATTEDLOBLE">CAFELATTEDLOBLE</option>
+                  <option value="CAFELATTEDOBLE">CAFELATTEDLOBLE</option>
                   <option value="AZUCARSACHET">AZUCARSACHET</option>
                   <option value="ENDULZANTESACHET">ENDULZANTESACHET</option>
                   <option value="VASOCAFE">VASOCAFE</option>
@@ -224,3 +224,4 @@ const FloatingForm = () => {
     };
     
     export default FloatingForm;
+  
