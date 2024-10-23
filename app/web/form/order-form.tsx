@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { createOrder } from '@/actions/purchaseOrder/create-order';
+import axios from 'axios';
 
 const FloatingForm = () => {
     const [showError, setShowError] = useState({
@@ -51,12 +52,21 @@ const FloatingForm = () => {
                     proveedor: group, 
                     sku: sku,
                     cantidad: Number(quantity),
-                    vencimiento: vencimiento.toISOString(),
+                    vencimiento: vencimiento,
                 });
-
                 if (response && response.id) { 
-                    setSuccessMessage(`Orden creada con éxito con ID = ${response.id}`); 
-                    console.log('Orden creada exitosamente', response);
+                    await axios.post(`https://granizo${group}.ing.puc.cl/api/orders`, 
+                        { 
+                            id: response.id,
+                            dueDate: vencimiento,
+                            products: [
+                                {
+                                    sku: sku,
+                                    quantity: Number(quantity)
+                                }
+                            ]
+                        });
+                    setSuccessMessage('Orden creada con éxito');
                 } else {
                     setErrorMessage('Error al crear la orden');
                 }
@@ -91,7 +101,7 @@ const FloatingForm = () => {
                             <option value="LECHEENTERA">LECHEENTERA</option>
                             <option value="LECHEENTERAPORPORCION">LECHEENTERAPORCION</option>
                             <option value="CAFELATTE">CAFELATTE</option>
-                            <option value="CAFELATTEDLOBLE">CAFELATTEDLOBLE</option>
+                            <option value="CAFELATTEDOBLE">CAFELATTEDOBLE</option>
                             <option value="AZUCARSACHET">AZUCARSACHET</option>
                             <option value="ENDULZANTESACHET">ENDULZANTESACHET</option>
                             <option value="VASOCAFE">VASOCAFE</option>
