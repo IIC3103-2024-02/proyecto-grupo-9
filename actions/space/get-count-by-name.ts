@@ -13,7 +13,7 @@ export async function getSpaceCountByName(name: string) {
         }
         const productCounts = await getProductCount(spaceId);
         const skuCount: { [sku: string]: number } = {};
-        productCounts.forEach((product: { sku: string ; quantity: number; }) => {
+        productCounts?.forEach((product: { sku: string ; quantity: number; }) => {
             skuCount[product.sku] = product.quantity;
         });
         return skuCount;
