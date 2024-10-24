@@ -41,6 +41,7 @@ export async function monitorDirectory(remoteDir: string): Promise<void> {
         }, 5 * 60 * 1000); // Poll directory every 5 minutes
     } catch (error) {
         console.error('SFTP connection error:', error);
+        await sftp.end();
         monitorDirectory(remoteDir);
     }
 }
