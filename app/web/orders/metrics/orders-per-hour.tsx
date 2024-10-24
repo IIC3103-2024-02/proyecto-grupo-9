@@ -28,7 +28,7 @@ function OrdersLineChart({ orders: o }: OrdersLineChartProps) {
     useEffect(() => {
     // Contamos las órdenes por hora
 
-        const ordersByHour: { [key: string]:  { delivered: number, rejected: number, accepted: number, passed: number } } = {};
+        const ordersByHour: { [key: string]: { delivered: number; rejected: number; accepted: number; passed: number } } = {};
 
         orders.forEach(order => {
             const hour = formatHour(order.createdAt.toString());

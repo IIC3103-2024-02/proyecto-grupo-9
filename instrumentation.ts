@@ -5,6 +5,6 @@ export async function register () {
         const { monitorDirectory } = await import("./lib/sftp");
         const { startStockCheckInterval } = await import("./actions/order/stock-up2");
         monitorDirectory('/pedidos');
-        startStockCheckInterval(60);
+        startStockCheckInterval(20);
     }
 }

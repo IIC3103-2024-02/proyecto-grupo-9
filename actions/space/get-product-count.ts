@@ -1,7 +1,6 @@
 
 import { fetchToken } from "@/lib/coffeeshopToken";
 
-export const revalidate = 0;
 
 interface ProductCountResponse {
     sku: string;

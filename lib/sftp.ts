@@ -34,16 +34,15 @@ async function getFileContent(remotePath: string): Promise<string | null> {
   
 export async function monitorDirectory(remoteDir: string): Promise<void> {
     try {
-        await sftp.connect(config);
-        console.log('Connected to SFTP server.');
-        
-        await checkDirectory(remoteDir);
-  
         setInterval(async () => {
+            await sftp.connect(config);
             await checkDirectory(remoteDir);
+            await sftp.end();
         }, 5 * 60 * 1000); // Poll directory every 5 minutes
     } catch (error) {
         console.error('SFTP connection error:', error);
+        await sftp.end();
+        monitorDirectory(remoteDir);
     }
 }
 

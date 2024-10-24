@@ -17,7 +17,7 @@ export default async function Page() {
     return (
         <div className='flex flex-col items-center'>
             <Dashboard  spaces={spaces} />
-            <OrdersLineChart orders={JSON.parse(JSON.stringify(orders))} />
+            {/* <OrdersLineChart orders={JSON.parse(JSON.stringify(orders))} /> */}
             {/* <StockAndExpirationDashboard products={JSON.parse(JSON.stringify(products))} spaces={spaces} /> */}
         </div>
     );

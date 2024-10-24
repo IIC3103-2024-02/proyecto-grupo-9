@@ -8,7 +8,6 @@ import { getSpaceIds } from "../space/spaces-id";
 import { moveManyIngredients } from "./move-ingedients";
 import Order, { IOrder } from "@/models/Order";
 import Product from "@/models/Product";
-import { connect } from "http2";
 import connectDB from "@/lib/db";
 
 
@@ -58,12 +57,12 @@ export async function deliver(order: IOrder) {
                 await connectDB();
                 order.dispatched += 1;
                 await deliverProduct(order._id, readyProducts[i]._id);
-                order.save();
             }
         } else {
             console.log('Not enough ready products found in checkOut');
         }
     }
+    await order.save();
 }
 
 export async function markOrderAsDone(orderId: string) {

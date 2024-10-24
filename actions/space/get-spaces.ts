@@ -26,8 +26,6 @@ export interface SpaceData {
     skuCount: { [skuName: string]: number };
 }
 
-export const revalidate = 0;
-
 export async function getSpaces() {
     try {
         const token = await fetchToken();
