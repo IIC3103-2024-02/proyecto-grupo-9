@@ -43,6 +43,7 @@ export async function cook(order: IOrder) {
             }
             await waitARequestedProduct(product.sku, product.quantity, "kitchen");
             await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: "kitchen", destiny: "checkOut" });
+            await sleep(3000);
         }
     }
 }
@@ -51,6 +52,7 @@ export async function deliver(order: IOrder) {
     console.log('Entregando productos...')
     const spaceIds = await getSpaceIds();
     for (const product of order.products) {
+        
         const readyProducts = await getSpaceProducts(spaceIds["checkOut"], product.sku);
         if (readyProducts && readyProducts.length >= product.quantity) {
             for (let i = 0; i < product.quantity; i++) {
@@ -69,6 +71,7 @@ export async function markOrderAsDone(orderId: string) {
     const order = await Order.findById(orderId);
     order.status = 'delivered';
     await order.save();
+    console.log('Orden', orderId, 'marcada como entregada');
 }
 
 export default async function sleep(ms: number): Promise<void> {
@@ -77,7 +80,7 @@ export default async function sleep(ms: number): Promise<void> {
 
 async function waitARequestedProduct(sku: string, quantity: number, spaceName: string) {
     const product = await Product.findOne({sku: sku});
-    const waitTime = product.production.time*1000*60+1000;
+    const waitTime = product.production.time*1000*60+5*1000;
     console.log('Esperando ',waitTime / 1000, ' segundos ...')
 
     await sleep(waitTime);
@@ -87,9 +90,9 @@ async function waitARequestedProduct(sku: string, quantity: number, spaceName: s
     let count = space?.[sku] || 0;
     let attempts = 0
     console.log('Cantidad de', sku, 'en', spaceName, ':', count)
-    while (count < quantity) {
+    while (count < quantity && attempts < 40) {
         console.log('Esperando ', product.sku, '... intento ', attempts)
-        await sleep(30*1000)
+        await sleep(60*1000)
         space = await getSpaceCountByName(spaceName);
         count = space?.[sku] || 0;
         attempts++

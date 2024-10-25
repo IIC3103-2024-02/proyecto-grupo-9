@@ -50,7 +50,11 @@ async function checkDirectory(remoteDir: string) {
     const files = await sftp.list(remoteDir) as SFTPFile[];
     console.log(`Checking ${files.length} files in ${remoteDir}`);
 
-    for (const file of files) {
+    const filteredFiles = files.filter(file => !file.name.includes('cache'));
+
+    for (const file of filteredFiles) {
+    // for (const file of files) {
+        // console.log(`******* Processing file ${file.name} ********`);
         const content = await getFileContent(`${remoteDir}/${file.name}`);
         if (content) {
             const parsedContent = await parseStringPromise(content, { explicitArray: false });
@@ -60,12 +64,13 @@ async function checkDirectory(remoteDir: string) {
                 /* console.log(`Order ${order.id} has expired. Deleting file ${file.name}`); */
                 await sftp.delete(`${remoteDir}/${file.name}`);
             } else if (order?.estado === 'creada') {
+                console.log(`Orden ${order.id} creada. Enviando a la API...`);
                 await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
                     id: order.id,
                     order: parsedContent.order.sku,
                     dueDate: order.vencimiento
                 })
-                await sleep(20000);
+                await sleep(30*1000); // 30 seconds
                 /* console.log(`Order ${order?.id} has been sended to the API`); */
             }
         }

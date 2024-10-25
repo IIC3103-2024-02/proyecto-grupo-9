@@ -1,5 +1,5 @@
 
-import { getProducts } from '@/actions/product/get-products';
+
 import { getSpaces } from '@/actions/space/get-spaces';
 
 import { NextResponse } from 'next/server';
