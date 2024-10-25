@@ -2,11 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, Label } from 'recharts';
-import { getProducts } from '@/actions/product/get-products';
-import connectDB from '@/lib/db';
-import Product from '@/models/Product';
 import { getSpaceProducts } from '@/actions/space/get-space-products';
-import { getSpaces } from '@/actions/space/get-spaces';
 import { IProduct } from '@/models/Product';
 import { SpaceDictionary } from '@/actions/space/get-spaces';
 

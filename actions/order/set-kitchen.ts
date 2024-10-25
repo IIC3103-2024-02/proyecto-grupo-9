@@ -2,7 +2,6 @@
 
 import { IOrder } from "@/models/Order";
 import Product from "@/models/Product";
-import { getSpaces } from "../space/get-spaces";
 import { getSpaceCountByName } from "../space/get-count-by-name";
 import { moveManyIngredients } from "./move-ingedients";
 
