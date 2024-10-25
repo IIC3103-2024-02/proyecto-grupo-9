@@ -1,5 +1,4 @@
-import { Schema, model, Document, Types, models } from 'mongoose';
-import { IProduct } from './Product';
+import { Schema, model, Document, models } from 'mongoose';
 
 export interface IOrder extends Document {
   _id: string;

@@ -35,16 +35,17 @@ export async function POST(req: NextRequest) {
             dueDate: order.vencimiento
         });
 
-        if (false) {
-            // Si la orden no se puede procesar
-            await updateOrder({ orderId: id, status: 'rechazada' });
-            o.status = 'rejected';
-            await o.save();
+        // if (false) {
+        //     // Si la orden no se puede procesar
+        //     await updateOrder({ orderId: id, status: 'rechazada' });
+        //     o.status = 'rejected';
+        //     await o.save();
             
-            return NextResponse.json({
-                status: 'rechazado'
-            }, { status: 200 });
-        } else {
+        //     return NextResponse.json({
+        //         status: 'rechazado'
+        //     }, { status: 200 });
+        // } else {
+        if (true) {
             // Si la orden se puede procesar
             manageOrder(o._id)
             await updateOrder({ orderId: id, status: 'aceptada' });
@@ -59,8 +60,8 @@ export async function POST(req: NextRequest) {
         
     } catch (error) {
         return NextResponse.json({
-            error: (error as Error).message
-        }, {status: 500});
+            error: (error as Error).message || 'Error desconocido en POST /api/orders'
+        }, { status: 500 });
     }
 }
 
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(orders, { status: 200 });
     } catch (error) {
         return NextResponse.json({
-            error: (error as Error).message
+            error: (error as Error).message || 'Error desconocido en GET /api/orders'
         }, { status: 500 });
     }
 }

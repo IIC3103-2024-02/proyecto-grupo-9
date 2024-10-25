@@ -5,6 +5,7 @@ import Order, {IOrder} from "@/models/Order"
 import { setKitchen } from "./set-kitchen";
 import { moveSugarAndSweetener } from "./move-ingedients";
 import { splitMilk, grindCoffee, cook, deliver, markOrderAsDone } from "./coffee-preparacion";
+import { stockUp } from "./stock-up";
 
 export async function manageOrder(orderId: string) {
     try {
@@ -16,7 +17,8 @@ export async function manageOrder(orderId: string) {
         // order = await checkCheckOut(order)
         if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET')) {
             await moveSugarAndSweetener(order)
-        } else {
+        }
+        if (order.products.some((product: {'sku': string, 'quantity': number}) => product.sku === 'CAFEEXPRESSO' || product.sku === 'CAFEEXPRESSODOBLE' || product.sku === 'CAFELATTE' || product.sku === 'CAFELATTEDOBLE')) {
             await setKitchen(order);
             await splitMilk();
             await grindCoffee();
@@ -24,36 +26,13 @@ export async function manageOrder(orderId: string) {
         }
         await deliver(order);
         markOrderAsDone(orderId);
+        stockUp();
+
     } catch (error) {
         console.log('Error en manageOrder: ', error)
     }
 }
 
 
-
-// async function checkCheckOut(order: IOrder) {
-//     console.log('Revisando checkOut')
-//     const spaces = await getSpaces();
-//     for (const product of order.products) {
-//         if (spaces.checkOut.skuCount[product.sku] >= product.quantity) {
-//             const readyProducts = await getSpaceProducts(spaces.checkOut.id, product.sku);
-//             if (readyProducts) {
-//                 for (let i = 0; i < product.quantity; i++) {
-//                     await deliverProduct(order._id.toString(), readyProducts[i]._id);
-//                 }
-//                 order.products = order.products.filter((p: {'sku': string, 'quantity': number}) => p.sku !== product.sku);
-//                 if (order.products.length === 0) {
-//                     markOrderAsDone(order._id.toString());
-//                 }
-//                 order.save();
-//             } else {
-//                 console.log('No ready products found in checkOut');
-//             }
-//         } else {
-//             console.log('No hay suficientes ', product.sku, ' en checkOut');
-//         }
-//     }
-//     return order;
-// }
 
 

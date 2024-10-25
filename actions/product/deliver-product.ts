@@ -24,7 +24,6 @@ export async function deliverProduct(orderId: string, productId: string) {
 
         if (res.status === 204) {
             console.log('Producto entregado ', productId, ' en la orden ', orderId);
-            return;
         }
 
         return;

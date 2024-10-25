@@ -43,9 +43,12 @@ export async function moveManyIngredients({ sku, quantity, origin, destiny }: { 
 export async function moveSugarAndSweetener(order: IOrder) {
     for (const product of order.products) {
         if (product.sku === 'AZUCARSACHET' || product.sku === 'ENDULZANTESACHET') {
-            const move = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: "buffer", destiny: "checkOut" });
-            if (move < product.quantity) {
-                await moveManyIngredients({ sku: product.sku, quantity: product.quantity - move, origin: "checkIn", destiny: "checkOut" });
+            const move_buff = await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: "buffer", destiny: "checkOut" });
+            if (move_buff < product.quantity) {
+                const move_chckin = await moveManyIngredients({ sku: product.sku, quantity: product.quantity - move_buff, origin: "checkIn", destiny: "checkOut" });
+                if (move_chckin + move_buff < product.quantity) {
+                    console.log(`No hay suficientes ${product.sku} en el buffer ni en el checkIn`);
+                }
             }
         }
     }

@@ -23,6 +23,7 @@ export interface IProduct extends Document {
   }
   createdAt: Date;
   updatedAt: Date;
+  pending: number;
 }
 
 const productSchema = new Schema<IProduct>({
@@ -44,7 +45,8 @@ const productSchema = new Schema<IProduct>({
     sellable: { type: Boolean, required: true, default: false },
     storage: {
         cold: { type: Boolean, required: true, default: false }
-    }
+    },
+    pending: { type: Number, default: 0 },
 }, { timestamps: true });
 
 const Product = models.Product || model<IProduct>("Product", productSchema);
