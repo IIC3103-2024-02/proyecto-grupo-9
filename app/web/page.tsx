@@ -11,7 +11,7 @@ import { getSpaces } from '@/actions/space/get-spaces';
 
 export default async function Page() {
     await connectDB();
-    const orders = await Order.find({}, '_id createdAt').sort({ createdAt: 1 }).exec() as IOrder[];
+    const orders = await Order.find({}).sort({ createdAt: 1 }).exec() as IOrder[];
     const products = await Product.find({}).exec();
     const spaces = await getSpaces();
     return (
