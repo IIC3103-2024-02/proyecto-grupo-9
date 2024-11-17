@@ -1,6 +1,6 @@
 
 
-import { getSpaces } from '@/actions/space/get-spaces';
+import { getSpaces } from '@/actions/space/get-spaces-details';
 
 import { NextResponse } from 'next/server';
 

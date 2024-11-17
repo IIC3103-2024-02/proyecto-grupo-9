@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LabelList, Label } from 'recharts';
 import { getSpaceProducts } from '@/actions/space/get-space-products';
 import { IProduct } from '@/models/Product';
-import { SpaceDictionary } from '@/actions/space/get-spaces';
+import { SpaceDictionary } from '@/actions/space/get-spaces-details';
 
 
 interface ProductCount {

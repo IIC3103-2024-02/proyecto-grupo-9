@@ -4,8 +4,8 @@ import { deliverProduct } from "../product/deliver-product";
 import { requestProducts } from "../product/request-products";
 import { getSpaceProducts } from "../space/get-space-products";
 import { getSpaceCountByName } from "../space/get-count-by-name";
-import { getSpaceIds } from "../space/spaces-id";
-import { moveManyIngredients } from "./move-ingedients";
+import { spaceIds } from "../product/constants";
+import { tryToMoveManyIngredients } from "./move-ingedients";
 import Order, { IOrder } from "@/models/Order";
 import Product from "@/models/Product";
 import connectDB from "@/lib/db";
@@ -17,7 +17,7 @@ export async function splitMilk() {
     if (n_wholeMilk > 0) {
         console.log('Separando leche')
         await requestProducts({ sku: 'LECHEENTERAPORCION', quantity: n_wholeMilk * 12 });
-        await waitARequestedProduct('LECHEENTERAPORCION', 12, "kitchen");
+        await waitARequestedProduct('LECHEENTERAPORCION', 11, "kitchen");
     }
 }
 
@@ -27,7 +27,7 @@ export async function grindCoffee() {
     if (n_CoffeeBeans > 0) {
         console.log('Moliendo café')
         await requestProducts({ sku: 'CAFEMOLIDOPORCION', quantity: n_CoffeeBeans * 20 });
-        await waitARequestedProduct('CAFEMOLIDOPORCION', 20, "kitchen");
+        await waitARequestedProduct('CAFEMOLIDOPORCION', 19, "kitchen");
     }
 }
 
@@ -42,7 +42,7 @@ export async function cook(order: IOrder) {
                 return;
             }
             await waitARequestedProduct(product.sku, product.quantity, "kitchen");
-            await moveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: "kitchen", destiny: "checkOut" });
+            await tryToMoveManyIngredients({ sku: product.sku, quantity: product.quantity, origin: "kitchen", destiny: "checkOut" });
             await sleep(3000);
         }
     }
@@ -50,7 +50,6 @@ export async function cook(order: IOrder) {
 
 export async function deliver(order: IOrder) {
     console.log('Entregando productos...')
-    const spaceIds = await getSpaceIds();
     for (const product of order.products) {
         
         const readyProducts = await getSpaceProducts(spaceIds["checkOut"], product.sku);
@@ -78,7 +77,7 @@ export default async function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function waitARequestedProduct(sku: string, quantity: number, spaceName: string) {
+async function waitARequestedProduct(sku: string, quantity: number, spaceName: keyof typeof spaceIds) {
     const product = await Product.findOne({sku: sku});
     const waitTime = product.production.time*1000*60+5*1000;
     console.log('Esperando ',waitTime / 1000, ' segundos ...')
@@ -90,7 +89,7 @@ async function waitARequestedProduct(sku: string, quantity: number, spaceName: s
     let count = space?.[sku] || 0;
     let attempts = 0
     console.log('Cantidad de', sku, 'en', spaceName, ':', count)
-    while (count < quantity && attempts < 40) {
+    while (count < quantity && attempts < 30) {
         console.log('Esperando ', product.sku, '... intento ', attempts)
         await sleep(60*1000)
         space = await getSpaceCountByName(spaceName);
