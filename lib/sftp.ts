@@ -42,7 +42,7 @@ export async function monitorDirectory(remoteDir: string): Promise<void> {
     } catch (error) {
         console.error('SFTP connection error:', error);
         await sftp.end();
-        monitorDirectory(remoteDir);
+        /* monitorDirectory(remoteDir); */
     }
 }
 
