@@ -3,7 +3,7 @@
 import { IOrder } from "@/models/Order";
 import Product from "@/models/Product";
 import { getSpaceCountByName } from "../space/get-count-by-name";
-import { moveManyIngredients } from "./move-ingedients";
+import { tryToMoveManyIngredients } from "./move-ingedients";
 
 
 export async function setKitchen(order: IOrder) {
@@ -15,8 +15,7 @@ export async function setKitchen(order: IOrder) {
     }
 
     let missing_ingredients = await getMissingIngredients(necessary_ingredients, available_ingredients);
-    missing_ingredients = await requestIngredientsToBuffer(missing_ingredients);
-    missing_ingredients = await requestIngredientsToCheckIn(missing_ingredients);
+    missing_ingredients = await requestMissingIngredients(missing_ingredients);
     if (!checkKitchen(missing_ingredients)) {
         console.log('No se pudieron mover todos los ingredientes a cocina')
         return;
@@ -82,18 +81,18 @@ async function getMissingIngredients(necessary_ingredients: Record<string, numbe
     return missing_ingredients;
 }
 
-async function requestIngredientsToBuffer(missing_ingredients: Record<string, number>) {
+async function requestMissingIngredients(missing_ingredients: Record<string, number>) {
     for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "buffer", destiny: "kitchen" });
+        const units = await tryToMoveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "buffer", destiny: "kitchen" });
         missing_ingredients[ingredient] -= units;
-    }
-    return missing_ingredients;
-}
-
-async function requestIngredientsToCheckIn(missing_ingredients: Record<string, number>) {
-    for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "checkIn", destiny: "kitchen" });
-        missing_ingredients[ingredient] -= units;
+        if (missing_ingredients[ingredient] > 0) {
+            const units = await tryToMoveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "cold", destiny: "kitchen" });
+            missing_ingredients[ingredient] -= units;
+            if (missing_ingredients[ingredient] > 0) {
+                const units = await tryToMoveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "checkIn", destiny: "kitchen" });
+                missing_ingredients[ingredient] -= units;
+            }
+        }
     }
     return missing_ingredients;
 }

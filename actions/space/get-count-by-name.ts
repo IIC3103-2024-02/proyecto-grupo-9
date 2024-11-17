@@ -1,11 +1,10 @@
+'use server'
 
-
-import { getSpaceIds } from "./spaces-id";
+import { spaceIds } from "../product/constants";
 import { getProductCount } from "./get-product-count";
 
-export async function getSpaceCountByName(name: string) {
+export async function getSpaceCountByName(name: keyof typeof spaceIds) {
     try {
-        const spaceIds = await getSpaceIds();
         const spaceId = spaceIds[name];
         if (!spaceId) {
             console.log('Space not found');

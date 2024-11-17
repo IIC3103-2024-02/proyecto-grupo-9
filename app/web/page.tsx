@@ -7,7 +7,7 @@ import Order from '@/models/Order';
 import Product from '@/models/Product';
 import type { IOrder } from '@/models/Order';
 import Dashboard from './orders/metrics/space-usege';
-import { getSpaces } from '@/actions/space/get-spaces';
+import { getSpaces } from '@/actions/space/get-spaces-details';
 
 export default async function Page() {
     await connectDB();
