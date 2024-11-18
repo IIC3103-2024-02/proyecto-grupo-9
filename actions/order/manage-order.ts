@@ -7,6 +7,7 @@ import { setKitchen } from "./set-kitchen";
 import { splitMilk, grindCoffee, cook, deliver, markOrderAsDone } from "./coffee-preparacion";
 import { stockUp } from "../product/stock-up";
 import { reOrganize } from "../product/reorganize";
+import { createInvoice } from "../invoice/create-invoice";
 
 export async function manageOrder(orderId: string) {
     try {
@@ -27,6 +28,7 @@ export async function manageOrder(orderId: string) {
         }
         await deliver(order);
         markOrderAsDone(orderId);
+        createInvoice(orderId);
         stockUp();
         reOrganize();
 
