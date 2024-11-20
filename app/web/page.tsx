@@ -7,13 +7,13 @@ import Order from '@/models/Order';
 import Product from '@/models/Product';
 import type { IOrder } from '@/models/Order';
 import Dashboard from './orders/metrics/space-usege';
-import { getSpaces } from '@/actions/space/get-spaces-details';
+import { getSpacesDetails } from '@/actions/space/get-spaces-details';
 
 export default async function Page() {
     await connectDB();
     const orders = await Order.find({}).sort({ createdAt: 1 }).exec() as IOrder[];
     const products = await Product.find({}).exec();
-    const spaces = await getSpaces();
+    const spaces = await getSpacesDetails();
     return (
         <div className='flex flex-col items-center'>
             <Dashboard  spaces={spaces} />

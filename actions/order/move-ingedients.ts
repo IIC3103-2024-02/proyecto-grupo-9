@@ -3,7 +3,7 @@
 import { moveProduct } from "../product/move-product";
 import { getSpaceProducts } from "../space/get-space-products";
 import { spaceIds } from "../product/constants";
-import sleep from "./coffee-preparacion";
+import sleep from "./cooking";
 
 
 export async function tryToMoveManyIngredients({ sku, quantity, origin, destiny }: 
@@ -52,7 +52,7 @@ export async function moveManyIngredients({ sku, quantity, origin, destiny }:
 
         for (let i = 0; i < quantity; i++) {
             await moveProduct(spaceIds[destiny], products[i]._id);
-            sleep(500);
+            sleep(1000);
         }
         console.log('Se movieron ' + quantity + ' ' + sku + '. Solicitud completada.');
     } catch (error: any) {

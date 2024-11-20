@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { createOrder } from '@/actions/purchaseOrder/create-order';
 import axios from 'axios';
+import { requestProductToAnotherGroup } from '@/actions/product/request-product-group';
 
 const FloatingForm = () => {
     const [showError, setShowError] = useState({
@@ -46,51 +47,15 @@ const FloatingForm = () => {
             setErrorMessage('');
             console.log('crear orden');
 
+            
+            
             try {
-                const response = await createOrder({
-                    cliente: "9", 
-                    proveedor: group, 
-                    sku: sku,
-                    cantidad: Number(quantity),
-                    vencimiento: vencimiento,
-                });
+                const response = await requestProductToAnotherGroup(group, sku, Number(quantity));
 
-                if (response && response.id) { 
-                    setSuccessMessage(`Orden creada con éxito con ID = ${response.id}`); 
-                    console.log('Orden creada exitosamente', response);
-
-                    const orderDetails = {
-                        id: response.id, // Suponiendo que response tiene un campo id
-                        dueDate: response.vencimiento, // Suponiendo que tienes esta fecha
-                        order: [
-                            {
-                                sku: sku,
-                                quantity: Number(quantity)
-                            }
-                        ]
-                    };
-
-                    const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
-
-                    try {
-                        const res = await axios.post(apiUrl, orderDetails, {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-  
-                        const { status } = res.data;
-                        alert(status);
-                    } catch (error) {
-                        console.error('Error al realizar la segunda solicitud:', error);
-                        alert('Hubo un error al procesar la segunda solicitud.');
-                    }
-
-                } else {
-                    setErrorMessage('Error al crear la orden');
-                }
-            } 
-            catch (error) {
+                setSuccessMessage(`Orden creada con éxito con ID = ${response?.id}`); 
+                console.log('Orden creada exitosamente', response);
+                
+            } catch (error) {
                 setErrorMessage('Error al crear la orden');
                 console.error('Error:', error);
             }
