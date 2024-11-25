@@ -4,6 +4,7 @@ import { getSpacesDetails } from "../space/get-spaces-details";
 import { requestProducts } from "./request-products";
 import Product from "@/models/Product";
 import { productsInfo } from "./constants";
+import { requestProductToAnotherGroup } from "./request-product-group";
 
 
 export async function stockUp() {
@@ -15,7 +16,7 @@ export async function stockUp() {
         return;
     }
 
-    for (const { sku, threshold, quantity } of productsInfo) {
+    for (const { sku, threshold, quantity, distributor } of productsInfo) {
     
         const pendingProduct = await Product.findOne({ sku });
         if (!pendingProduct) {
@@ -27,14 +28,21 @@ export async function stockUp() {
             + (spaces.cold.skuCount?.[sku] || 0 ) + (spaces.checkOut.skuCount?.[sku] || 0);
         const pending = pendingProduct.pending;
         // console.log(`Stock total de ${sku}: ${totalStock}\tStock pendiente: ${pending}\tThreshold: ${threshold}`);
-        if (totalStock < threshold && pending === 0) {
-            requestProducts({ sku, quantity });
-            console.log(`Solicitando ${quantity} unidades de ${sku}. (Stock actual: ${totalStock})`);
-            pendingProduct.pending += quantity;
+        if (pending + totalStock <= threshold) {
+            if (distributor) {
+                requestProducts({ sku, quantity });
+                console.log(`Solicitando ${quantity} unidades de ${sku}. (Stock actual: ${totalStock})`);
+                pendingProduct.pending += quantity;
+            } else {
+                const randomIndex = Math.floor(Math.random() * pendingProduct.groups.length);
+                const group = pendingProduct.groups[randomIndex];
+                requestProductToAnotherGroup(group, sku, quantity);
+                console.log(`Solicitando ${quantity} unidades de ${sku} al grupo ${group}. (Stock actual: ${totalStock})`);
+                pendingProduct.pending = 1;
+            }
         } else if (totalStock > threshold && pending > 0) {
             pendingProduct.pending = 0;
         }
-
         try {
             await pendingProduct.save();
         } catch (error) {

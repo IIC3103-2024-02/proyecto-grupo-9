@@ -1,6 +1,6 @@
 'use server'
 
-import sleep from '@/actions/order/coffee-preparacion';
+import sleep from '@/actions/order/cooking';
 import { getOrder } from '@/actions/purchaseOrder/get-order';
 import axios from 'axios';
 import Client from 'ssh2-sftp-client';

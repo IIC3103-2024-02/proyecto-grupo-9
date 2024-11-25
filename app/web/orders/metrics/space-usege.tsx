@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { getSpaces } from '@/actions/space/get-spaces-details'; 
+import { getSpacesDetails } from '@/actions/space/get-spaces-details'; 
 import { SpaceData } from '@/actions/space/get-spaces-details';
 import {SpaceDictionary} from '@/actions/space/get-spaces-details';
 
