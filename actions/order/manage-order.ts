@@ -9,6 +9,7 @@ import { deliver, markOrderAsDone } from "./deliver";
 import { stockUp } from "../product/stock-up";
 import { reOrganize } from "../product/reorganize";
 import { moveNonRecipeProducts } from "./move-non-recipe";
+import { createInvoice } from "../invoice/create-invoice";
 
 export async function manageOrder(orderId: string) {
     try {
@@ -28,6 +29,7 @@ export async function manageOrder(orderId: string) {
         }
         await deliver(order);
         markOrderAsDone(orderId);
+        createInvoice(orderId);
         stockUp();
         reOrganize();
 

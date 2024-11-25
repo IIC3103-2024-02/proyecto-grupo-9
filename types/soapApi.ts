@@ -23,6 +23,7 @@ export interface BillingDetails {
     status: string;
     price: number;
     interest: number;
+    totalPrice: number;
     createdAt: string;
     updatedAt: string;
 }
