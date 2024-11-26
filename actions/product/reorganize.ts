@@ -25,6 +25,4 @@ export async function reOrganize() {
             await moveManyIngredients({ sku, quantity: prodInBuffer, origin: 'buffer', destiny: place });
         }
     }
-
-
 }
