@@ -34,6 +34,9 @@ async function getFileContent(remotePath: string): Promise<string | null> {
   
 export async function monitorDirectory(remoteDir: string): Promise<void> {
     try {
+        await sftp.connect(config);
+        await checkDirectory(remoteDir);
+        await sftp.end();
         setInterval(async () => {
             await sftp.connect(config);
             await checkDirectory(remoteDir);

@@ -28,10 +28,11 @@ export async function manageOrder(orderId: string) {
             await cook(order);
         }
         await deliver(order);
-        markOrderAsDone(orderId);
-        createInvoice(orderId);
+        await markOrderAsDone(orderId);
+        
         stockUp();
         reOrganize();
+        createInvoice(orderId);
 
     } catch (error) {
         console.log('Error en manageOrder: ', error)

@@ -15,11 +15,6 @@ export function getBankStatementAsync(): Promise<BankStatement> {
 
             client.setSecurity(wsSecurity);
 
-            console.log("This client has the following operations:");
-            console.log(client.describe());
-            console.log("\n");
-
-            console.log("Calling getBankStatement operation:");
             client.getBankStatement({}, function(err: any, result: BankStatementResult) {
                 if (err) {
                     return reject(err); // Handle SOAP operation error
@@ -48,7 +43,6 @@ export function getInvoicesAsync({status, side, fromDate, toDate} : GetInvoicesA
                 toDate
             };
 
-            console.log("Calling getInvoices operation:");
             client.getInvoices(getInvoicesArgs, function(err: any, result: any) {
                 if (err) {
                     return reject(err); // Reject if there is an error in the SOAP call
@@ -102,7 +96,6 @@ export function payInvoiceAsync(invoiceId: string): Promise<BillingDetails> {
                 invoice_id: invoiceId
             };
 
-            console.log("Calling payInvoice operation:");
             client.payInvoice(payInvoiceArgs, function(err: any, result: any) {
                 if (err) {
                     return reject(err); // Reject if there is an error in the SOAP call

@@ -8,12 +8,18 @@ const saveBalance = async () => {
     try {
         await connectDB();
         const balanceDetails = await getBankStatementAsync();
-        await Balance.create(balanceDetails);
+        await Balance.create({
+            group: "9",
+            balance: balanceDetails.balance
+        });
     } catch (error) {
         console.log('Error en saveBalance: ', error)
     }
 }
 
-export const startBalanceSavingInterval = () => {
-    setInterval(saveBalance, 600000); // 600,000 ms = 10 minutes
+export const startBalanceSavingInterval = async () => {
+    await saveBalance();
+    setInterval(async () => {
+        await saveBalance();
+    }, 600000); // 600,000 ms = 10 minutes
 };
