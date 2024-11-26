@@ -26,55 +26,30 @@ export async function setKitchen(order: IOrder) {
 
 async function whatDoINeed(order: IOrder) {
     const products = await Product.find();
-    const necessary_ingredients: Record<string, number> = {
-        'CAFEMOLIDOPORCION': 0,
-        'LECHEENTERAPORCION': 0,
-        'VASOCAFE': 0,
-        'VASOCAFEDOBLE': 0,
-        'VASOCAFEEXPRESO': 0,
-
-        'KUCHENMANZANANUEZTROZO': 0,
-        'CHEESECAKEPORCION': 0,
-
-        'QUESOLAMINADO': 0,
-        'JAMONLAMINADO': 0,
-        'NUTELLAPORCION': 0,
-        "CROISSANT": 0,
-    };
+    const necessary_ingredients: Record<string, number> = {};
 
     for (const product of order.products) {
         const productData = products.find(p => p.sku === product.sku);
         if (product.sku === 'KUCHENMANZANANUEZTROZO' || product.sku ==='CHEESECAKEPORCION') {
-            necessary_ingredients[`${product.sku}`] += product.quantity;
+            necessary_ingredients[`${product.sku}`] = (necessary_ingredients[product.sku] || 0) + product.quantity;
         } else {
             for (const ingredient of productData.recipe) {
-                necessary_ingredients[`${ingredient.sku}`] += ingredient.req * product.quantity;
+                necessary_ingredients[`${ingredient.sku}`] = (necessary_ingredients[product.sku] || 0) + ingredient.req * product.quantity;
             }
         }
     }
-    console.log('\n----------------\nIngredientes necesarios:', necessary_ingredients, '\n')
+    console.log('\n----------------\nIngredientes necesarios en kitchen:', necessary_ingredients, '\n')
     return necessary_ingredients;
 }
 
 async function whatDoIHave() {
     const kitchen = await getSpaceCountByName('kitchen');
+    const available_ingredients: Record<string, number> = {};
 
-    const available_ingredients: Record<string, number> = {
-        'CAFEMOLIDOPORCION': kitchen?.['CAFEMOLIDOPORCION'] || 0,
-        'LECHEENTERAPORCION': kitchen?.['LECHEENTERAPORCION'] || 0,
-        'VASOCAFE': kitchen?.['VASOCAFE'] || 0,
-        'VASOCAFEDOBLE': kitchen?.['VASOCAFEDOBLE'] || 0,
-        'VASOCAFEEXPRESO': kitchen?.['VASOCAFEEXPRESO'] || 0,
-
-        'KUCHENMANZANANUEZTROZO': kitchen?.['KUCHENMANZANANUEZTROZO'] || 0,
-        'CHEESECAKEPORCION': kitchen?.['CHEESECAKEPORCION'] || 0,
-        'QUESOLAMINADO': kitchen?.['QUESOLAMINADO'] || 0, 
-        'JAMONLAMINADO': kitchen?.['JAMONLAMINADO'] || 0, 
-        'NUTELLAPORCION': kitchen?.['NUTELLAPORCION'] || 0, 
-        "CROISSANT": kitchen?.['CROISSANT'] || 0, 
-    };
-
-    console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
+    for (const sku in kitchen) {
+        available_ingredients[sku] = (available_ingredients[sku] || 0) + kitchen[sku];
+    }
+    console.log('\n-----------------\nIngredientes disponibles en kitchen: ', available_ingredients, '\n')
     return available_ingredients;
 }
 
@@ -82,11 +57,8 @@ async function getMissingIngredients(necessary_ingredients: Record<string, numbe
     const missing_ingredients: Record<string, number> = {};
 
     for (const ingredient in necessary_ingredients) {
-        if (necessary_ingredients[ingredient] > available_ingredients[ingredient]) {
-            const difference = necessary_ingredients[ingredient] - available_ingredients[ingredient];
-            if (difference > 0) {
-                missing_ingredients[ingredient] = difference;
-            }
+        if (necessary_ingredients[ingredient] > (available_ingredients[ingredient] || 0)) {
+            missing_ingredients[ingredient] = necessary_ingredients[ingredient] - (available_ingredients[ingredient] || 0);
         }
     }
     for (const { sku, base, quantity } of ingredientsPreparation) {
@@ -96,7 +68,7 @@ async function getMissingIngredients(necessary_ingredients: Record<string, numbe
         }
     }
 
-    console.log('\n-----------------\nIngredientes faltantes: ', missing_ingredients, '\n')
+    console.log('\n-----------------\nIngredientes faltantes en kitchen: ', missing_ingredients, '\n')
     return missing_ingredients;
 }
 

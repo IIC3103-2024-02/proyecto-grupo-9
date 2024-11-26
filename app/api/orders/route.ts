@@ -6,6 +6,9 @@ import Order from "@/models/Order"
 import { NextResponse, NextRequest } from 'next/server';
 import { getOrder } from "@/actions/purchaseOrder/get-order";
 import { updateOrder } from "@/actions/purchaseOrder/update-order";
+import { acceptOrder } from "@/actions/order/accept-order";
+import { stockUp } from "@/actions/product/stock-up";
+import { reOrganize } from "@/actions/product/reorganize";
 
 export async function POST(req: NextRequest) {
     try {
@@ -34,19 +37,8 @@ export async function POST(req: NextRequest) {
             status: 'pending',
             dueDate: order.vencimiento
         });
-
-        // if (false) {
-        //     // Si la orden no se puede procesar
-        //     await updateOrder({ orderId: id, status: 'rechazada' });
-        //     o.status = 'rejected';
-        //     await o.save();
-            
-        //     return NextResponse.json({
-        //         status: 'rechazado'
-        //     }, { status: 200 });
-        // } else {
-        if (true) {
-            // Si la orden se puede procesar
+        const accept = await acceptOrder(o);
+        if (accept) {
             manageOrder(o._id)
             await updateOrder({ orderId: id, status: 'aceptada' });
             o.status = 'acepted';
@@ -55,6 +47,13 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({
                 status: 'aceptado'
             }, {status: 200});
+        } else {
+            await updateOrder({ orderId: id, status: 'rechazada' });
+            stockUp();
+            reOrganize();
+            return NextResponse.json({
+                status: 'rechazado'
+            }, { status: 200 });
         }
         
         

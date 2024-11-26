@@ -34,7 +34,7 @@ export async function stockUp() {
                 console.log(`Solicitando ${quantity} unidades de ${sku}. (Stock actual: ${totalStock})`);
                 pendingProduct.pending += quantity;
             } else {
-                const randomIndex = Math.floor(Math.random() * pendingProduct.groups.length);
+                const randomIndex = Math.floor(Math.random() * pendingProduct.groups.length());
                 const group = pendingProduct.groups[randomIndex];
                 requestProductToAnotherGroup(group, sku, quantity);
                 console.log(`Solicitando ${quantity} unidades de ${sku} al grupo ${group}. (Stock actual: ${totalStock})`);
