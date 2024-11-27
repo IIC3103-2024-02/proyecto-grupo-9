@@ -12,6 +12,7 @@ const saveBalance = async () => {
             group: "9",
             balance: balanceDetails.balance
         });
+        console.log('Balance guardado');
     } catch (error) {
         console.log('Error en saveBalance: ', error)
     }

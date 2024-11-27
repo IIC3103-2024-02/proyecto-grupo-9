@@ -2,7 +2,7 @@
 
 import { manageOrder } from "@/actions/order/manage-order";
 import connectDB from "@/lib/db"
-import Order from "@/models/Order"
+import Order, { IOrder } from "@/models/Order"
 import { NextResponse, NextRequest } from 'next/server';
 import { getOrder } from "@/actions/purchaseOrder/get-order";
 import { updateOrder } from "@/actions/purchaseOrder/update-order";
@@ -17,13 +17,14 @@ export async function POST(req: NextRequest) {
         const { id } = data;
 
         const order = await getOrder({ orderId: id });
+
         if (!order) {
             return NextResponse.json({
                 error: 'Orden no encontrada'
             }, { status: 404 });
         }
-
-        const o = await Order.create({
+        console.log(order);
+        const o = new Order({
             _id: id,
             products: {
                 sku: order.sku,
@@ -36,6 +37,9 @@ export async function POST(req: NextRequest) {
             status: 'pending',
             dueDate: order.vencimiento
         });
+        await o.save({ maxTimeMS: 15000 });
+
+
         console.log('Orden creada:');
         const accept = await acceptOrder(o);
         if (accept) {
