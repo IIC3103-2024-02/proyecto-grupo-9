@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         const { id } = data;
 
         const order = await getOrder({ orderId: id });
-        
+        console.log('Orden recibida:', order);
         if (!order) {
             return NextResponse.json({
                 error: 'Orden no encontrada'
@@ -37,8 +37,10 @@ export async function POST(req: NextRequest) {
             status: 'pending',
             dueDate: order.vencimiento
         });
+        console.log('Orden creada:');
         const accept = await acceptOrder(o);
         if (accept) {
+            console.log('Orden aceptada');
             manageOrder(o._id)
             await updateOrder({ orderId: id, status: 'aceptada' });
             o.status = 'acepted';
@@ -48,6 +50,7 @@ export async function POST(req: NextRequest) {
                 status: 'aceptado'
             }, {status: 200});
         } else {
+            console.log('Orden rechazada');
             await updateOrder({ orderId: id, status: 'rechazada' });
             stockUp();
             reOrganize();
@@ -58,6 +61,7 @@ export async function POST(req: NextRequest) {
         
         
     } catch (error) {
+        console.log('Error en POST /api/orders:', error);
         return NextResponse.json({
             error: (error as Error).message || 'Error desconocido en POST /api/orders'
         }, { status: 500 });

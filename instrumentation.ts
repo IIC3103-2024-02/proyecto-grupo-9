@@ -6,7 +6,7 @@ export async function register () {
         const { startBalanceSavingInterval } = await import("./actions/invoice/balance-interval");
         // const { startStockCheckInterval } = await import("./actions/order/stock-up");
         // const { getProducts } = await import("./actions/product/get-products");
-        /* monitorDirectory('/pedidos'); */
+        monitorDirectory('/pedidos');
         startBalanceSavingInterval()
         // startStockCheckInterval(20);
         // await getProducts();
