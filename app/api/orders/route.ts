@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
         const { id } = data;
 
         const order = await getOrder({ orderId: id });
-        console.log('Orden recibida:', order);
         if (!order) {
             return NextResponse.json({
                 error: 'Orden no encontrada'
