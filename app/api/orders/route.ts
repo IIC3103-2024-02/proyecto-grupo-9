@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
         const data = await req.json();
         const { id } = data;
 
+        // Get Order from api
         const order = await getOrder({ orderId: id });
 
         if (!order) {
@@ -23,20 +24,32 @@ export async function POST(req: NextRequest) {
                 error: 'Orden no encontrada'
             }, { status: 404 });
         }
-        const o = new Order({
-            _id: id,
-            products: {
-                sku: order.sku,
-                quantity: order.cantidad
-            },
-            quantity: order.cantidad,
-            dispatched: order.despachado,
-            client: order.cliente,
-            provider: order.proveedor,
-            status: 'pending',
-            dueDate: order.vencimiento
-        });
-        await o.save();
+
+        // save order in db
+        let o: IOrder;
+        try{
+            o = await Order.create({
+                _id: id,
+                products: {
+                    sku: order.sku,
+                    quantity: order.cantidad
+                },
+                quantity: order.cantidad,
+                dispatched: order.despachado,
+                client: order.cliente,
+                provider: order.proveedor,
+                status: 'pending',
+                dueDate: order.vencimiento
+            });
+        } catch (error) {
+            const existingOrder = await Order.findById(id);
+            if (!existingOrder) {
+                return NextResponse.json({
+                    error: 'Error al crear la orden'
+                }, { status: 500 });
+            }
+            o = existingOrder;
+        }
 
         const accept = await acceptOrder(o);
         if (accept) {
