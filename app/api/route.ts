@@ -11,7 +11,7 @@ export async function GET() {
     /* const products = await getProducts(); */
     /* const spaces = await getSpacesDetails(); */
     /* const bank = await getBankStatementAsync(); */
-    const bank = await getInvoicesAsync({
+    const spaces = await getInvoicesAsync({
         status: 'pending',
         side: 'supplier',
         fromDate: '2024-11-26',
@@ -19,5 +19,5 @@ export async function GET() {
     })
     /* monitorDirectory('/pedidos'); */
 
-    return NextResponse.json( {bank, status: 200 });
+    return NextResponse.json( {spaces, status: 200 });
 }
