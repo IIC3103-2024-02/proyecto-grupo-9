@@ -7,6 +7,7 @@ export interface IInvoice extends Document {
     channel: string;
     status: string;
     price: number;
+    totalPrice: number;
     interest: number;
     createdAt: Date;
     updatedAt: Date;
@@ -19,6 +20,7 @@ const invoiceSchema = new Schema<IInvoice>({
     channel: { type: String, required: true },
     status: { type: String, required: true },
     price: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
     interest: { type: Number, required: true },
     createdAt: { type: Date, required: true },
     updatedAt: { type: Date, required: true }
