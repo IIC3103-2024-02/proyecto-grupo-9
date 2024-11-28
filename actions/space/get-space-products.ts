@@ -1,6 +1,5 @@
 'use server'
 
-import axios from "axios"
 import { fetchToken } from "@/lib/coffeeshopToken"
 
 interface getSpaceProducts {

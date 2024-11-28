@@ -1,6 +1,6 @@
 'use server'
 
-import sleep from '@/actions/order/coffee-preparacion';
+import sleep from '@/actions/order/cooking';
 import { getOrder } from '@/actions/purchaseOrder/get-order';
 import axios from 'axios';
 import Client from 'ssh2-sftp-client';
@@ -34,15 +34,22 @@ async function getFileContent(remotePath: string): Promise<string | null> {
   
 export async function monitorDirectory(remoteDir: string): Promise<void> {
     try {
+        await sftp.connect(config);
+        await checkDirectory(remoteDir);
+        await sftp.end();
         setInterval(async () => {
-            await sftp.connect(config);
-            await checkDirectory(remoteDir);
-            await sftp.end();
+            try {
+                await sftp.connect(config);
+                await checkDirectory(remoteDir);
+                await sftp.end();
+            } catch (error) {
+                console.error('Error connecting to SFTP server');
+            }
+            
         }, 5 * 60 * 1000); // Poll directory every 5 minutes
     } catch (error) {
-        console.error('SFTP connection error:', error);
         await sftp.end();
-        monitorDirectory(remoteDir);
+        /* monitorDirectory(remoteDir); */
     }
 }
 
@@ -53,15 +60,14 @@ async function checkDirectory(remoteDir: string) {
     const filteredFiles = files.filter(file => !file.name.includes('cache'));
 
     for (const file of filteredFiles) {
-    // for (const file of files) {
-        // console.log(`******* Processing file ${file.name} ********`);
+        /* console.log(`******* Processing file ${file.name} ********`); */
         const content = await getFileContent(`${remoteDir}/${file.name}`);
         if (content) {
             const parsedContent = await parseStringPromise(content, { explicitArray: false });
             const order = await getOrder({ orderId: parsedContent.order.id });
 
             if (order?.estado === 'vencida' || order?.estado === 'cumplida' || order?.estado === 'anulada' || order?.estado === 'rechazada') {
-                /* console.log(`Order ${order.id} has expired. Deleting file ${file.name}`); */
+                console.log(`Order ${order.id} has expired. Deleting file ${file.name}`);
                 await sftp.delete(`${remoteDir}/${file.name}`);
             } else if (order?.estado === 'creada') {
                 console.log(`Orden ${order.id} creada. Enviando a la API...`);
@@ -70,6 +76,7 @@ async function checkDirectory(remoteDir: string) {
                     order: parsedContent.order.sku,
                     dueDate: order.vencimiento
                 })
+                console.log(`Order ${order.id} has been sended to the API`);
                 await sleep(30*1000); // 30 seconds
                 /* console.log(`Order ${order?.id} has been sended to the API`); */
             }

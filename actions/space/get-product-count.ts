@@ -1,3 +1,4 @@
+'use server'
 
 import { fetchToken } from "@/lib/coffeeshopToken";
 

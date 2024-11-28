@@ -101,7 +101,14 @@ export default function OrdersTable({ orders }: { orders: IOrder[] }) {
             {/* Tabla en el centro */}
             <div className="w-2/4 mx-4 flex flex-col">
                 <div className="relative h-full overflow-y-auto bg-slate-800 shadow-md rounded-lg">
-                    <table className="w-full text-left table-auto min-w-[1000px]">
+                    <table className="text-left table-auto min-w-[800px]">
+                        <colgroup>
+                            <col style={{ width: '28%' }} />
+                            <col style={{ width: '10%' }} />
+                            <col style={{ width: '32%' }} />
+                            <col style={{ width: '15%' }} />
+                            <col style={{ width: '15%' }} />
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th className="p-4 border-b border-slate-600 bg-slate-700">
@@ -124,19 +131,24 @@ export default function OrdersTable({ orders }: { orders: IOrder[] }) {
                         <tbody>
                             {filteredOrders.map((order) => (
                                 <tr key={order._id.toString()} className="even:bg-slate-900 hover:bg-slate-700">
-                                    <td className="p-4 border-b border-slate-700">{order.createdAt.toLocaleString()}</td>
-                                    <td className="p-4 border-b border-slate-700">{order._id}</td>
-                                    <td className="p-4 border-b border-slate-700">
+                                    <td className="py-2 px-6 border-b border-slate-700">
+                                        {(() => {
+                                            const d = order.createdAt.toLocaleString().split(/[-T:.Z]/);
+                                            return <p>{`${d[2]}/${d[1]}/${d[0]}  ${d[3]}:${d[4]}`}</p>;
+                                        })()}
+                                    </td>
+                                    <td className="py-2 px-6 border-b border-slate-700">{`${order._id.slice(0, 4)}...${order._id.slice(-5, -1)}`}</td>
+                                    <td className="py-2 px-6 border-b border-slate-700">
                                         {order.products.map((product) => (
                                             <div key={product.sku}>
-                                                SKU: {product.sku}, Cantidad: {product.quantity}
+                                                {product.quantity} {product.sku}
                                             </div>
                                         ))}
                                     </td>
-                                    <td className="p-4 border-b border-slate-700">
+                                    <td className="py-2 px-6 border-b border-slate-700">
                                         {order.status}
                                     </td>
-                                    <td className="p-4 border-b border-slate-700">
+                                    <td className="py-2 px-6 border-b border-slate-700">
                                         <button
                                             className="text-slate-300 hover:underline"
                                             onClick={() => handleViewDetails(order)}

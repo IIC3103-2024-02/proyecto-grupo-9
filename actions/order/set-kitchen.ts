@@ -3,7 +3,9 @@
 import { IOrder } from "@/models/Order";
 import Product from "@/models/Product";
 import { getSpaceCountByName } from "../space/get-count-by-name";
-import { moveManyIngredients } from "./move-ingedients";
+import { tryToMoveManyIngredients } from "./move-ingedients";
+import { ingredientsPreparation } from "../product/constants";
+import { spaceIds } from "../product/constants";
 
 
 export async function setKitchen(order: IOrder) {
@@ -15,8 +17,7 @@ export async function setKitchen(order: IOrder) {
     }
 
     let missing_ingredients = await getMissingIngredients(necessary_ingredients, available_ingredients);
-    missing_ingredients = await requestIngredientsToBuffer(missing_ingredients);
-    missing_ingredients = await requestIngredientsToCheckIn(missing_ingredients);
+    missing_ingredients = await requestMissingIngredients(missing_ingredients, 'kitchen');
     if (!checkKitchen(missing_ingredients)) {
         console.log('No se pudieron mover todos los ingredientes a cocina')
         return;
@@ -25,36 +26,30 @@ export async function setKitchen(order: IOrder) {
 
 async function whatDoINeed(order: IOrder) {
     const products = await Product.find();
-    const necessary_ingredients: Record<string, number> = {
-        'CAFEMOLIDOPORCION': 0,
-        'LECHEENTERAPORCION': 0,
-        'VASOCAFE': 0,
-        'VASOCAFEDOBLE': 0,
-        'VASOCAFEEXPRESO': 0,
-    };
+    const necessary_ingredients: Record<string, number> = {};
 
     for (const product of order.products) {
         const productData = products.find(p => p.sku === product.sku);
-        for (const ingredient of productData.recipe) {
-            necessary_ingredients[`${ingredient.sku}`] += ingredient.req * product.quantity;
+        if (product.sku === 'KUCHENMANZANANUEZTROZO' || product.sku ==='CHEESECAKEPORCION') {
+            necessary_ingredients[`${product.sku}`] = (necessary_ingredients[product.sku] || 0) + product.quantity;
+        } else {
+            for (const ingredient of productData.recipe) {
+                necessary_ingredients[`${ingredient.sku}`] = (necessary_ingredients[product.sku] || 0) + ingredient.req * product.quantity;
+            }
         }
     }
-    console.log('\n----------------\nIngredientes necesarios:', necessary_ingredients, '\n')
+    console.log('\n----------------\nIngredientes necesarios en kitchen:', necessary_ingredients, '\n')
     return necessary_ingredients;
 }
 
 async function whatDoIHave() {
     const kitchen = await getSpaceCountByName('kitchen');
+    const available_ingredients: Record<string, number> = {};
 
-    const available_ingredients: Record<string, number> = {
-        'CAFEMOLIDOPORCION': kitchen?.['CAFEMOLIDOPORCION'] || 0,
-        'LECHEENTERAPORCION': kitchen?.['LECHEENTERAPORCION'] || 0,
-        'VASOCAFE': kitchen?.['VASOCAFE'] || 0,
-        'VASOCAFEDOBLE': kitchen?.['VASOCAFEDOBLE'] || 0,
-        'VASOCAFEEXPRESO': kitchen?.['VASOCAFEEXPRESO'] || 0,
-    };
-
-    console.log('\n-----------------\nIngredientes disponibles: ', available_ingredients, '\n')
+    for (const sku in kitchen) {
+        available_ingredients[sku] = (available_ingredients[sku] || 0) + kitchen[sku];
+    }
+    console.log('\n-----------------\nIngredientes disponibles en kitchen: ', available_ingredients, '\n')
     return available_ingredients;
 }
 
@@ -62,38 +57,33 @@ async function getMissingIngredients(necessary_ingredients: Record<string, numbe
     const missing_ingredients: Record<string, number> = {};
 
     for (const ingredient in necessary_ingredients) {
-        if (necessary_ingredients[ingredient] > available_ingredients[ingredient]) {
-            const difference = necessary_ingredients[ingredient] - available_ingredients[ingredient];
-            if (difference > 0) {
-                missing_ingredients[ingredient] = difference;
-            }
+        if (necessary_ingredients[ingredient] > (available_ingredients[ingredient] || 0)) {
+            missing_ingredients[ingredient] = necessary_ingredients[ingredient] - (available_ingredients[ingredient] || 0);
         }
     }
-    if (missing_ingredients['CAFEMOLIDOPORCION']) {
-        missing_ingredients['CAFEGRANO'] = Math.floor(missing_ingredients['CAFEMOLIDOPORCION'] / 20) + 1;
-        delete missing_ingredients['CAFEMOLIDOPORCION'];
-    }
-    if (missing_ingredients['LECHEENTERAPORCION']) {
-        missing_ingredients['LECHEENTERA'] = Math.floor(missing_ingredients['LECHEENTERAPORCION'] / 12) + 1;
-        delete missing_ingredients['LECHEENTERAPORCION'];
+    for (const { sku, base, quantity } of ingredientsPreparation) {
+        if (missing_ingredients[sku]) {
+            missing_ingredients[base] = Math.floor(missing_ingredients[sku] / quantity) + 1;
+            delete missing_ingredients[sku];
+        }
     }
 
-    console.log('\n-----------------\nIngredientes faltantes: ', missing_ingredients, '\n')
+    console.log('\n-----------------\nIngredientes faltantes en kitchen: ', missing_ingredients, '\n')
     return missing_ingredients;
 }
 
-async function requestIngredientsToBuffer(missing_ingredients: Record<string, number>) {
+export async function requestMissingIngredients(missing_ingredients: Record<string, number>, destiny: keyof typeof spaceIds) {
     for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "buffer", destiny: "kitchen" });
+        const units = await tryToMoveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "buffer", destiny: destiny });
         missing_ingredients[ingredient] -= units;
-    }
-    return missing_ingredients;
-}
-
-async function requestIngredientsToCheckIn(missing_ingredients: Record<string, number>) {
-    for (const ingredient in missing_ingredients) {
-        const units = await moveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "checkIn", destiny: "kitchen" });
-        missing_ingredients[ingredient] -= units;
+        if (missing_ingredients[ingredient] > 0) {
+            const units = await tryToMoveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "cold", destiny: destiny });
+            missing_ingredients[ingredient] -= units;
+            if (missing_ingredients[ingredient] > 0) {
+                const units = await tryToMoveManyIngredients({ sku: ingredient, quantity: missing_ingredients[ingredient], origin: "checkIn", destiny: destiny });
+                missing_ingredients[ingredient] -= units;
+            }
+        }
     }
     return missing_ingredients;
 }
