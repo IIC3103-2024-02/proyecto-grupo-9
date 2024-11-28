@@ -41,7 +41,7 @@ export async function requestProductToAnotherGroup(group: string, sku: string, q
                 }
                 return ret;
             } catch (error) {
-                console.error('Error al solicitar productos a otro grupo:', error);
+                console.error('Error al solicitar productos a otro grupo:');
             }
 
         } else {

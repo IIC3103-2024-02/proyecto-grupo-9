@@ -10,6 +10,7 @@ export async function createInvoice(orderId: string) {
         const billingDetails = await emitInvoiceAsync(orderId);
         await Invoice.create(billingDetails);
     } catch (error) {
-        console.log('Error en createInvoice: ', error)
+        console.log('Error en createInvoice: ')
+        // console.log('Error en createInvoice: ', error)
     }
 }
