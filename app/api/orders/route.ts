@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
                 error: 'Orden no encontrada'
             }, { status: 404 });
         }
-        console.log(order);
         const o = new Order({
             _id: id,
             products: {
@@ -37,10 +36,8 @@ export async function POST(req: NextRequest) {
             status: 'pending',
             dueDate: order.vencimiento
         });
-        await o.save({ maxTimeMS: 15000 });
+        await o.save();
 
-
-        console.log('Orden creada:');
         const accept = await acceptOrder(o);
         if (accept) {
             console.log('Orden aceptada');

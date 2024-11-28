@@ -2,7 +2,7 @@
 
 import { getSpacesDetails } from "../space/get-spaces-details";
 import { requestProducts } from "./request-products";
-import Product from "@/models/Product";
+import Product, { IProduct } from "@/models/Product";
 import { productsInfo } from "./constants";
 import { requestProductToAnotherGroup } from "./request-product-group";
 
@@ -18,7 +18,7 @@ export async function stockUp() {
 
     for (const { sku, threshold, quantity, distributor } of productsInfo) {
     
-        const pendingProduct = await Product.findOne({ sku });
+        const pendingProduct = await Product.findOne({ sku }) as IProduct;
         if (!pendingProduct) {
             console.error(`Producto con SKU ${sku} no encontrado.`);
             continue;
@@ -34,8 +34,8 @@ export async function stockUp() {
                 console.log(`Solicitando ${quantity} unidades de ${sku}. (Stock actual: ${totalStock})`);
                 pendingProduct.pending += quantity;
             } else {
-                const randomIndex = Math.floor(Math.random() * pendingProduct.groups.length());
-                const group = pendingProduct.groups[randomIndex];
+                const randomIndex = Math.floor(Math.random() * pendingProduct.production.groups.length);
+                const group = pendingProduct.production.groups[randomIndex];
                 requestProductToAnotherGroup(group, sku, quantity);
                 console.log(`Solicitando ${quantity} unidades de ${sku} al grupo ${group}. (Stock actual: ${totalStock})`);
                 pendingProduct.pending = 1;
