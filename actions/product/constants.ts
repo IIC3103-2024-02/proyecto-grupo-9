@@ -69,7 +69,8 @@ export const recipeProducts = [
     "CAFELATTEDOBLE",
     "KUCHENMANZANANUEZTROZO",
     "CHEESECAKEPORCION",
-    "COISSANTJAMONQUESO",
+    // "COISSANTJAMONQUESO",
+    "CROISSANTJAMONQUESO",
     "COISSANTNUTELLA",
 ]
 
@@ -100,6 +101,7 @@ export const recipeProducts = [
 //  "JAMONENTERO": 'si',
 //  "JAMONLAMINADO": 'si',
 // // "**** CROISSANTJAMONQUESO *****": 'si',
+
 //  "NUTELLA": '-------------no',
 //  "NUTELLAPORCION": 'si',
 // // "CROISSANTNUTELLA": 'si',
