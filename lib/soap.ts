@@ -1,12 +1,14 @@
+'use server'
+
 import { BankStatementResult, BankStatement, GetInvoicesArgs, BillingDetails } from '@/types/soapApi';
-import soap from 'soap';
+import soap, { WSSecurity} from 'soap';
 
 const WSDL_URL = `${process.env.API_URI}/soap/billing?wsdl`;
 const API_SECRET = process.env.API_SECRET || '';
 const API_USER = '9'
-var wsSecurity = new soap.WSSecurity(API_USER, API_SECRET);
+var wsSecurity = new WSSecurity(API_USER, API_SECRET);
 
-export function getBankStatementAsync(): Promise<BankStatement> {
+export async function getBankStatementAsync(): Promise<BankStatement> {
     return new Promise((resolve, reject) => {
         soap.createClient(WSDL_URL, {}, function(err, client) {
             if (err) {
@@ -27,7 +29,7 @@ export function getBankStatementAsync(): Promise<BankStatement> {
     });
 }
 
-export function getInvoicesAsync({status, side, fromDate, toDate} : GetInvoicesArgs) : Promise<BillingDetails[]> {
+export async function getInvoicesAsync({status, side, fromDate, toDate} : GetInvoicesArgs) : Promise<BillingDetails[]> {
     return new Promise((resolve, reject) => {
         soap.createClient(WSDL_URL, {}, function(err, client) {
             if (err) {
@@ -58,7 +60,7 @@ export function getInvoicesAsync({status, side, fromDate, toDate} : GetInvoicesA
     });
 };
 
-export function emitInvoiceAsync(orderId: string): Promise<BillingDetails> {
+export async function emitInvoiceAsync(orderId: string): Promise<BillingDetails> {
     return new Promise((resolve, reject) => {
         soap.createClient(WSDL_URL, {}, function(err, client) {
             if (err) {
@@ -83,7 +85,7 @@ export function emitInvoiceAsync(orderId: string): Promise<BillingDetails> {
     });
 }
 
-export function payInvoiceAsync(invoiceId: string): Promise<BillingDetails> {
+export async function payInvoiceAsync(invoiceId: string): Promise<BillingDetails> {
     return new Promise((resolve, reject) => {
         soap.createClient(WSDL_URL, {}, function(err, client) {
             if (err) {

@@ -80,18 +80,3 @@ export async function POST(req: NextRequest) {
         }, { status: 500 });
     }
 }
-
-export async function GET(req: NextRequest) {
-    try {
-        await connectDB();
-
-        //órdenes con campos _id y createdAt
-        const orders = await Order.find({}).sort({ createdAt: 1 }).exec();
-
-        return NextResponse.json(orders, { status: 200 });
-    } catch (error) {
-        return NextResponse.json({
-            error: (error as Error).message || 'Error desconocido en GET /api/orders'
-        }, { status: 500 });
-    }
-}
