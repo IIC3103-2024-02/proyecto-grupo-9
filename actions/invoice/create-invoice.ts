@@ -8,7 +8,6 @@ export async function createInvoice(orderId: string) {
     try {
         await connectDB();
         const billingDetails = await emitInvoiceAsync(orderId);
-        console.log('billingDetails: ', billingDetails);
         await Invoice.create({
             id: billingDetails.id,
             client: billingDetails.client,

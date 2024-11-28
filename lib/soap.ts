@@ -1,7 +1,7 @@
 'use server'
 
 import { BankStatementResult, BankStatement, GetInvoicesArgs, BillingDetails, BillingDetailsResult } from '@/types/soapApi';
-import soap, { WSSecurity} from 'soap';
+import soap, { WSSecurity, createClientAsync} from 'soap';
 
 const WSDL_URL = `${process.env.API_URI}/soap/billing?wsdl`;
 const API_SECRET = process.env.API_SECRET || '';
@@ -95,13 +95,5 @@ export async function payInvoiceAsync(invoiceId: string): Promise<BillingDetails
 }
 
 function createSoapClient(url: string): Promise<soap.Client> {
-    return new Promise((resolve, reject) => {
-        soap.createClient(url, {}, function(err, client) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(client);
-            }
-        });
-    });
+    return createClientAsync(url);
 }
