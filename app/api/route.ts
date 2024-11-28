@@ -9,7 +9,6 @@ export const revalidate = 0;
 export async function GET() {
     /* const products = await getProducts(); */
     const spaces = await getSpacesDetails();
-    
     /* monitorDirectory('/pedidos'); */
 
     return NextResponse.json( {spaces, status: 200 });

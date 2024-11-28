@@ -1,4 +1,3 @@
-'use server'
 
 // Hardcoded values for spaces Ids that could change in the future
 const ProdSpaceIds = {
