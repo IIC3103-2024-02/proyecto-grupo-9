@@ -5,6 +5,7 @@ import { requestProducts } from "./request-products";
 import Product, { IProduct } from "@/models/Product";
 import { productsInfo } from "./constants";
 import { requestProductToAnotherGroup } from "./request-product-group";
+import connectDB from "@/lib/db";
 
 
 export async function stockUp() {
@@ -45,6 +46,7 @@ export async function stockUp() {
             pendingProduct.pending = 0;
         }
         try {
+            await connectDB();
             await pendingProduct.save();
         } catch (error) {
             console.error(`Error al guardar el producto ${sku}`);
