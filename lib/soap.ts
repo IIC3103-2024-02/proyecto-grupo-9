@@ -1,4 +1,3 @@
-'use server'
 
 import { BankStatementResult, BankStatement, GetInvoicesArgs, BillingDetails, BillingDetailsResult } from '@/types/soapApi';
 import soap, { WSSecurity, createClientAsync} from 'soap';

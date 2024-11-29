@@ -4,6 +4,7 @@ import connectDB from "@/lib/db";
 import { getSpaceProducts } from "../space/get-space-products";
 import { deliverProduct } from "../product/deliver-product";
 import { spaceIds } from "../product/constants";
+import sleep from "./cooking";
 
 
 export async function deliver(order: IOrder) {
@@ -11,11 +12,13 @@ export async function deliver(order: IOrder) {
     for (const product of order.products) {
         
         const readyProducts = await getSpaceProducts(spaceIds["checkOut"], product.sku);
+        console.log('Productos listos: ', readyProducts?.length);
+        await connectDB();
         if (readyProducts && readyProducts.length >= product.quantity) {
             for (let i = 0; i < product.quantity; i++) {
-                await connectDB();
                 order.dispatched += 1;
                 await deliverProduct(order._id, readyProducts[i]._id);
+                await sleep(500);
             }
         } else {
             console.log('Not enough ready products found in checkOut');

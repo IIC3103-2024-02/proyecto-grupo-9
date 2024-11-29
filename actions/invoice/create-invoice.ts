@@ -20,6 +20,7 @@ export async function createInvoice(orderId: string) {
             createdAt: billingDetails.createdAt,
             updatedAt: billingDetails.updatedAt
         });
+        console.log('Factura creada con éxito');
     } catch (error) {
         console.log('Error en createInvoice: ', error)
     }
