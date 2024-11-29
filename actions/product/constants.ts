@@ -21,21 +21,21 @@ export const spaceIds = process.env.API_URI?.startsWith("https://prod") ? ProdSp
 export const productsInfo: { sku: string, threshold: number, quantity: number, place: keyof typeof spaceIds, distributor: boolean }[] = [
     { sku: 'LECHEENTERA', threshold: 15, quantity: 24, place: 'cold', distributor: true},
     { sku: 'CAFEGRANO', threshold: 20, quantity: 10, place: 'cold', distributor: true},
-    { sku: 'KUCHENMANZANANUEZ', threshold: 6, quantity: 2, place: 'cold', distributor: true},   // new
-    { sku: 'CHEESECAKE', threshold: 6, quantity: 1, place: 'cold', distributor: false},         // new
+    { sku: 'KUCHENMANZANANUEZ', threshold: 10, quantity: 2, place: 'cold', distributor: true},   // new
+    { sku: 'CHEESECAKE', threshold: 10, quantity: 1, place: 'cold', distributor: false},         // new
     { sku: 'QUESOENTERO', threshold: 4, quantity: 1, place: 'cold', distributor: false},        // new
     { sku: 'JAMONENTERO', threshold: 4, quantity: 1, place: 'cold', distributor: true},         // new
     { sku: 'NUTELLA', threshold: 2, quantity: 1, place: 'cold', distributor: false},         // new
+    { sku: 'CROISSANT', threshold: 20, quantity: 10, place: 'cold', distributor: true},      // new
 
-    { sku: 'ENDULZANTESACHET', threshold: 60, quantity: 100, place: 'checkOut', distributor: true},
-    { sku: 'AZUCARSACHET', threshold: 60, quantity: 100, place: 'checkOut', distributor: true},
-    { sku: 'BROWNIE', threshold: 14, quantity: 4, place: 'checkOut', distributor: true},         // new
-    { sku: 'PALMERA', threshold: 15, quantity: 1, place: 'checkOut', distributor: false},       // new
+    { sku: 'ENDULZANTESACHET', threshold: 50, quantity: 100, place: 'checkOut', distributor: true},
+    { sku: 'AZUCARSACHET', threshold: 50, quantity: 100, place: 'checkOut', distributor: true},
+    { sku: 'BROWNIE', threshold: 20, quantity: 4, place: 'checkOut', distributor: true},         // new
+    { sku: 'PALMERA', threshold: 20, quantity: 1, place: 'checkOut', distributor: false},       // new
 
-    { sku: 'VASOCAFE', threshold: 60, quantity: 100, place: 'checkIn', distributor: true},
-    { sku: 'VASOCAFEDOBLE', threshold: 50, quantity: 80, place: 'checkIn', distributor: true},
-    { sku: 'VASOCAFEEXPRESO', threshold: 70, quantity: 120, place: 'checkIn', distributor: true},
-    { sku: 'CROISSANT', threshold: 20, quantity: 10, place: 'checkIn', distributor: true},      // new
+    { sku: 'VASOCAFE', threshold: 50, quantity: 100, place: 'checkIn', distributor: true},
+    { sku: 'VASOCAFEDOBLE', threshold: 40, quantity: 80, place: 'checkIn', distributor: true},
+    { sku: 'VASOCAFEEXPRESO', threshold: 60, quantity: 120, place: 'checkIn', distributor: true},
 ];
 
 export const ingredientsPreparation = [
