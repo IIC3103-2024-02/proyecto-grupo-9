@@ -28,7 +28,7 @@ export const productsInfo: { sku: string, threshold: number, quantity: number, p
 
     { sku: 'ENDULZANTESACHET', threshold: 60, quantity: 100, place: 'checkOut', distributor: true},
     { sku: 'AZUCARSACHET', threshold: 60, quantity: 100, place: 'checkOut', distributor: true},
-    { sku: 'BROWNIE', threshold: 10, quantity: 4, place: 'checkOut', distributor: true},         // new
+    { sku: 'BROWNIE', threshold: 14, quantity: 4, place: 'checkOut', distributor: true},         // new
     { sku: 'PALMERA', threshold: 15, quantity: 1, place: 'checkOut', distributor: false},       // new
 
     { sku: 'VASOCAFE', threshold: 60, quantity: 100, place: 'checkIn', distributor: true},
