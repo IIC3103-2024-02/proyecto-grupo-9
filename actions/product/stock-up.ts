@@ -28,7 +28,7 @@ export async function stockUp() {
             + (spaces.cold.skuCount?.[sku] || 0 ) + (spaces.checkOut.skuCount?.[sku] || 0);
         const pending = pendingProduct.pending;
 
-        console.log(`Stock total de ${sku}: ${totalStock}\tStock pendiente: ${pending}\tThreshold: ${threshold}`);
+        /* console.log(`Stock total de ${sku}: ${totalStock}\tStock pendiente: ${pending}\tThreshold: ${threshold}`); */
         if (pending + totalStock <= threshold) {
             if (distributor) {
                 requestProducts({ sku, quantity });
