@@ -25,6 +25,7 @@ export const productsInfo: { sku: string, threshold: number, quantity: number, p
     { sku: 'CHEESECAKE', threshold: 6, quantity: 1, place: 'cold', distributor: false},         // new
     { sku: 'QUESOENTERO', threshold: 4, quantity: 1, place: 'cold', distributor: false},        // new
     { sku: 'JAMONENTERO', threshold: 4, quantity: 1, place: 'cold', distributor: true},         // new
+    { sku: 'NUTELLA', threshold: 2, quantity: 1, place: 'cold', distributor: false},         // new
 
     { sku: 'ENDULZANTESACHET', threshold: 60, quantity: 100, place: 'checkOut', distributor: true},
     { sku: 'AZUCARSACHET', threshold: 60, quantity: 100, place: 'checkOut', distributor: true},
@@ -35,7 +36,6 @@ export const productsInfo: { sku: string, threshold: number, quantity: number, p
     { sku: 'VASOCAFEDOBLE', threshold: 50, quantity: 80, place: 'checkIn', distributor: true},
     { sku: 'VASOCAFEEXPRESO', threshold: 70, quantity: 120, place: 'checkIn', distributor: true},
     { sku: 'CROISSANT', threshold: 20, quantity: 10, place: 'checkIn', distributor: true},      // new
-    { sku: 'NUTELLA', threshold: 2, quantity: 1, place: 'checkIn', distributor: false},         // new
 ];
 
 export const ingredientsPreparation = [
