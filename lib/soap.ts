@@ -1,110 +1,98 @@
-import { BankStatementResult, BankStatement, GetInvoicesArgs, BillingDetails } from '@/types/soapApi';
-import soap from 'soap';
+
+import { BankStatementResult, BankStatement, GetInvoicesArgs, BillingDetails, BillingDetailsResult } from '@/types/soapApi';
+import soap, { WSSecurity, createClientAsync} from 'soap';
 
 const WSDL_URL = `${process.env.API_URI}/soap/billing?wsdl`;
 const API_SECRET = process.env.API_SECRET || '';
 const API_USER = '9'
-var wsSecurity = new soap.WSSecurity(API_USER, API_SECRET);
+var wsSecurity = new WSSecurity(API_USER, API_SECRET);
 
-export function getBankStatementAsync(): Promise<BankStatement> {
-    return new Promise((resolve, reject) => {
-        soap.createClient(WSDL_URL, {}, function(err, client) {
-            if (err) {
-                return reject(err); // Handle client creation error
-            }
+export async function getBankStatementAsync(): Promise<BankStatement> {
+    try {
+        const client = await createSoapClient(WSDL_URL);
+        client.setSecurity(wsSecurity);
 
-            client.setSecurity(wsSecurity);
-
-            client.getBankStatement({}, function(err: any, result: BankStatementResult) {
+        const result: BankStatementResult = await new Promise((resolve, reject) => {
+            client.getBankStatement({}, (err: any, result: BankStatementResult) => {
                 if (err) {
-                    return reject(err); // Handle SOAP operation error
-                }
-
-                // Assuming result has the format { BankStatement: { group: string, balance: number } }
-                resolve(result.BankStatement); // Resolve with the BankStatement directly
-            });
-        });
-    });
-}
-
-export function getInvoicesAsync({status, side, fromDate, toDate} : GetInvoicesArgs) : Promise<BillingDetails[]> {
-    return new Promise((resolve, reject) => {
-        soap.createClient(WSDL_URL, {}, function(err, client) {
-            if (err) {
-                return reject(err); // Reject if there's an error creating the client
-            }
-
-            client.setSecurity(wsSecurity);
-
-            const getInvoicesArgs = {
-                status,
-                side,
-                fromDate,
-                toDate
-            };
-
-            client.getInvoices(getInvoicesArgs, function(err: any, result: any) {
-                if (err) {
-                    return reject(err); // Reject if there is an error in the SOAP call
-                }
-
-                if (result && result.BillingDetails) {
-                    resolve(result.BillingDetails); // Resolve with BillingDetails
+                    reject(err); // Handle SOAP operation error
                 } else {
-                    resolve([]); // Resolve with an empty array if no BillingDetails
+                    resolve(result);
                 }
             });
         });
-    });
-};
 
-export function emitInvoiceAsync(orderId: string): Promise<BillingDetails> {
-    return new Promise((resolve, reject) => {
-        soap.createClient(WSDL_URL, {}, function(err, client) {
-            if (err) {
-                return reject(err); // Reject if there's an error creating the client
-            }
-
-            client.setSecurity(wsSecurity);
-
-            const emitInvoiceArgs = {
-                order_id: orderId
-            };
-
-            console.log("Calling emitInvoice operation:");
-            client.emitInvoice(emitInvoiceArgs, function(err: any, result: any) {
-                if (err) {
-                    return reject(err); // Reject if there is an error in the SOAP call
-                }
-
-                resolve(result.BillingDetails); // Resolve with the result of the operation
-            });
-        });
-    });
-}
-
-export function payInvoiceAsync(invoiceId: string): Promise<BillingDetails> {
-    return new Promise((resolve, reject) => {
-        soap.createClient(WSDL_URL, {}, function(err, client) {
-            if (err) {
-                return reject(err); // Reject if there's an error creating the client
-            }
-
-            client.setSecurity(wsSecurity);
-
-            const payInvoiceArgs = {
-                invoice_id: invoiceId
-            };
-
-            client.payInvoice(payInvoiceArgs, function(err: any, result: any) {
-                if (err) {
-                    return reject(err); // Reject if there is an error in the SOAP call
-                }
-
-                resolve(result.BillingDetails); // Resolve with the result of the operation
-            });
-        });
-    });
+        // Assuming result has the format { BankStatement: { group: string, balance: number } }
+        return result.BankStatement; // Return the BankStatement directly
+    } catch (error) {
+        throw error; // Rethrow the error for the caller to handle
+    }
 }
 
 
+export async function getInvoicesAsync({status, side, fromDate, toDate} : GetInvoicesArgs) : Promise<BillingDetails[]> {
+    try {
+        const client = await createSoapClient(WSDL_URL);
+        client.setSecurity(wsSecurity);
+
+        const result: BillingDetails[] = await new Promise((resolve, reject) => {
+            client.getInvoices({status, side, fromDate, toDate}, (err: any, result: { BillingDetails: BillingDetails[]}) => {
+                if (err) {
+                    reject(err); // Handle SOAP operation error
+                } else {
+                    resolve(result.BillingDetails);
+                }
+            });
+        });
+
+        return result; // Return the BillingDetails array directly
+    } catch (error) {
+        throw error; // Rethrow the error for the caller to handle
+    }
+}
+
+export async function emitInvoiceAsync(orderId: string): Promise<BillingDetails> {
+    try {
+        const client = await createSoapClient(WSDL_URL);
+        client.setSecurity(wsSecurity);
+
+        const result: BillingDetails = await new Promise((resolve, reject) => {
+            client.emitInvoice({order_id: orderId}, (err: any, result: BillingDetailsResult) => {
+                if (err) {
+                    reject(err); // Handle SOAP operation error
+                } else {
+                    resolve(result.BillingDetails);
+                }
+            });
+        });
+
+        return result; // Return the BillingDetails directly
+    } catch (error) {
+        throw error; // Rethrow the error for the caller to handle
+    }
+}
+
+export async function payInvoiceAsync(invoiceId: string): Promise<BillingDetails> {
+    try {
+        const client = await createSoapClient(WSDL_URL);
+        client.setSecurity(wsSecurity);
+
+        const result: BillingDetails = await new Promise((resolve, reject) => {
+            client.payInvoice({invoice_id: invoiceId}, (err: any, result: BillingDetails) => {
+                if (err) {
+                    reject(err); // Handle SOAP operation error
+                } else {
+                    resolve(result);
+                }
+            });
+        });
+
+        return result; // Return the BillingDetails directly
+    } catch (error) {
+        throw error; // Rethrow the error for the caller to handle
+    }
+}
+
+function createSoapClient(url: string): Promise<soap.Client> {
+    return createClientAsync(url);
+}

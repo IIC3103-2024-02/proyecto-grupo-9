@@ -15,6 +15,10 @@ export interface GetInvoicesArgs {
     toDate: string;
 }
 
+export interface BillingDetailsResult {
+    BillingDetails: BillingDetails;
+}
+
 export interface BillingDetails {
     id: string;
     client: string;

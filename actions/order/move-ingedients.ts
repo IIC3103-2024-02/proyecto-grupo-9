@@ -52,7 +52,7 @@ export async function moveManyIngredients({ sku, quantity, origin, destiny }:
 
         for (let i = 0; i < quantity; i++) {
             await moveProduct(spaceIds[destiny], products[i]._id);
-            sleep(1000);
+            sleep(600);
         }
         console.log('Se movieron ' + quantity + ' ' + sku + '. Solicitud completada.');
     } catch (error: any) {

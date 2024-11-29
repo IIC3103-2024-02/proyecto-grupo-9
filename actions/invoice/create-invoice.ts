@@ -8,7 +8,19 @@ export async function createInvoice(orderId: string) {
     try {
         await connectDB();
         const billingDetails = await emitInvoiceAsync(orderId);
-        await Invoice.create(billingDetails);
+        await Invoice.create({
+            id: billingDetails.id,
+            client: billingDetails.client,
+            supplier: billingDetails.supplier,
+            channel: billingDetails.channel,
+            status: billingDetails.status,
+            price: billingDetails.price,
+            totalPrice: billingDetails.totalPrice,
+            interest: billingDetails.interest,
+            createdAt: billingDetails.createdAt,
+            updatedAt: billingDetails.updatedAt
+        });
+        console.log('Factura creada con éxito');
     } catch (error) {
         console.log('Error en createInvoice: ')
         // console.log('Error en createInvoice: ', error)
