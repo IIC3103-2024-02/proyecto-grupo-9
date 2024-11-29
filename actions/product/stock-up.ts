@@ -5,6 +5,7 @@ import { requestProducts } from "./request-products";
 import Product, { IProduct } from "@/models/Product";
 import { productsInfo } from "./constants";
 import { requestProductToAnotherGroup } from "./request-product-group";
+import connectDB from "@/lib/db";
 
 
 export async function stockUp() {
@@ -28,7 +29,7 @@ export async function stockUp() {
             + (spaces.cold.skuCount?.[sku] || 0 ) + (spaces.checkOut.skuCount?.[sku] || 0);
         const pending = pendingProduct.pending;
 
-        console.log(`Stock total de ${sku}: ${totalStock}\tStock pendiente: ${pending}\tThreshold: ${threshold}`);
+        /* console.log(`Stock total de ${sku}: ${totalStock}\tStock pendiente: ${pending}\tThreshold: ${threshold}`); */
         if (pending + totalStock <= threshold) {
             if (distributor) {
                 requestProducts({ sku, quantity });
@@ -45,6 +46,7 @@ export async function stockUp() {
             pendingProduct.pending = 0;
         }
         try {
+            await connectDB();
             await pendingProduct.save();
         } catch (error) {
             console.error(`Error al guardar el producto ${sku}`);
