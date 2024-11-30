@@ -13,8 +13,13 @@ export async function automaticPay() {
     });
 
     for (const invoice of invoices) {
-        await payInvoiceAsync(invoice.id);
-        await sleep(1000);
+        try {
+            await payInvoiceAsync(invoice.id);
+            console.log(`Paying invoice ${invoice.id}`);
+        } catch (error) {
+            console.error(`Error paying invoice ${invoice.id}: ${error}`);
+        } 
+        await sleep(1000); // Wait 1 second before processing the next invoice
     }
 
 }

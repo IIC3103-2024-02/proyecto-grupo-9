@@ -15,7 +15,6 @@ export default async function Page(props:
     }
 ) {
     const { searchParams } = props;
-    console.log('searchParams', searchParams);
     const today = new Date();
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(today.getDate() - 3);
