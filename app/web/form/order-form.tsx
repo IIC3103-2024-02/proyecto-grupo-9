@@ -43,6 +43,58 @@ const FloatingForm = () => {
         setShowError(errors);
     
         if (!errors.sku && !errors.group && !errors.quantity) {
+<<<<<<< HEAD
+          setSuccessMessage(''); 
+          setErrorMessage('');
+          console.log('crear orden');
+
+          try {
+            const response = await createOrder({
+              cliente: "9", 
+              proveedor: group, 
+              sku: sku,
+              cantidad: Number(quantity),
+              vencimiento: vencimiento.toISOString(),
+            });
+
+            if (response && response.id) { 
+              setSuccessMessage(`Orden creada con éxito con ID = ${response.id}`); 
+              console.log('Orden creada exitosamente', response);
+
+              const orderDetails = {
+                id: response.id, 
+                order: [
+                  {
+                  sku: sku,
+                  quantity: Number(quantity)
+                  }
+                ],
+                dueDate: response.vencimiento
+              };
+              console.log('Order details:', orderDetails);
+              const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
+  
+              try {
+                const res = await axios.post(apiUrl, orderDetails, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (res.status >= 200 && res.status < 300) {
+                    const responseBody = res.data;
+                    console.log('Response:', responseBody);
+  
+                } else {
+                    console.error('Error en enviar la orden:', res.status);
+                }
+              } catch (error) {
+                console.error('Error al realizar la segunda solicitud:', error);
+                alert('Hubo un error al procesar la segunda solicitud.');
+              }
+
+            } else {
+              setErrorMessage('Error al crear la orden');
+=======
             setSuccessMessage(''); 
             setErrorMessage('');
             console.log('crear orden');
@@ -58,6 +110,7 @@ const FloatingForm = () => {
             } catch (error) {
                 setErrorMessage('Error al crear la orden');
                 console.error('Error:', error);
+>>>>>>> ff3e7b1cf539128090d0757702013fe6a579657c
             }
         }
     };
