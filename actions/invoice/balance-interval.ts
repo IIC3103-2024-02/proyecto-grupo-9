@@ -4,7 +4,7 @@ import connectDB from "@/lib/db"
 import Balance from "@/models/Balance"
 import { getBankStatementAsync } from "@/lib/soap"
 
-const saveBalance = async () => {
+export const saveBalance = async () => {
     try {
         await connectDB();
         const balanceDetails = await getBankStatementAsync();
@@ -17,10 +17,3 @@ const saveBalance = async () => {
         console.log('Error en saveBalance: ', error)
     }
 }
-
-export const startBalanceSavingInterval = async () => {
-    await saveBalance();
-    setInterval(async () => {
-        await saveBalance();
-    }, 600000); // 600,000 ms = 10 minutes
-};
