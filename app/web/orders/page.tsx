@@ -13,7 +13,6 @@ export default async function Home() {
 
     return (
         <div>
-            <h1>Orders</h1>
             <OrdersTable orders={JSON.parse(JSON.stringify(orders))} />
         </div>
     );

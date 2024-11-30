@@ -28,19 +28,30 @@ function OrdersLineChart({ orders: o }: OrdersLineChartProps) {
     useEffect(() => {
     // Contamos las órdenes por hora
 
-        const ordersByHour: { [key: string]: number } = {};
+        const ordersByHour: { [key: string]: { delivered: number; rejected: number; accepted: number; passed: number } } = {};
 
         orders.forEach(order => {
             const hour = formatHour(order.createdAt.toString());
             if (!ordersByHour[hour]) {
-                ordersByHour[hour] = 0;
+                ordersByHour[hour] = { delivered: 0, rejected: 0, accepted: 0, passed:0 };
             }
-            ordersByHour[hour]++;
+            if (order.status === "delivered") {
+                ordersByHour[hour].delivered++;
+            } else if (order.status === "rejected") {
+                ordersByHour[hour].rejected++;
+            } else if (order.status === "acepted") {
+                ordersByHour[hour].accepted++;
+            } else if (order.status === "passed") {
+                ordersByHour[hour].passed++;
+            }
         });
 
         const formattedData = Object.keys(ordersByHour).map(hour => ({
             name: hour,
-            orders: ordersByHour[hour],
+            delivered: ordersByHour[hour].delivered,
+            rejected: ordersByHour[hour].rejected,
+            accepted: ordersByHour[hour].accepted,
+            vencidas: ordersByHour[hour].passed,
         }));
 
         setChartData(formattedData);
@@ -61,7 +72,10 @@ function OrdersLineChart({ orders: o }: OrdersLineChartProps) {
                     <YAxis label={{ value: 'Número de Órdenes', angle: -90, position: 'insideLeft' }} />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="orders" stroke="#8884d8" />
+                    <Line type="monotone" dataKey="delivered" stroke="#8884d8" name="Delivered Orders" />
+                    <Line type="monotone" dataKey="rejected" stroke="#82ca9d" name="Rejected Orders" />
+                    <Line type="monotone" dataKey="accepted" stroke="#ffc658" name="Accepted Orders" />
+                    <Line type="monotone" dataKey="passed" stroke="#ff7300" name="Passed Orders" />
                 </LineChart>
             ) : (
                 <p>Cargando datos de orders...</p>

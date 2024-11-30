@@ -1,8 +1,12 @@
-
+'use server'
 
 import { fetchToken } from "@/lib/coffeeshopToken";
 
-export const revalidate = 0;
+
+interface ProductCountResponse {
+    sku: string;
+    quantity: number;
+}
 
 export async function getProductCount(storeId: string) {
     try {
@@ -20,9 +24,14 @@ export async function getProductCount(storeId: string) {
         if (!res.ok) {
             throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
         }
-        return await res.json();
+
+        const data = await res.json() as ProductCountResponse[];
+
+        // If the data is null or empty, return an empty array
+        return data ?? [];
+        
     } catch (error: any) {
-        //onsole.log(error);
+        console.log(error);
         console.log("Error al solicitar conteo de productos en ", storeId);
         return null;
     }

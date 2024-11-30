@@ -1,12 +1,12 @@
 'use server';
 
-import FloatingForm from "./order-form";
+import { InvoicesTable } from "./invoices-table";
 
 export default async function Page() {
 
     return (
         <div>
-            <FloatingForm />
+            <InvoicesTable />
         </div>
     );
 }

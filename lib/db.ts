@@ -1,4 +1,5 @@
-import mongoose, {Mongoose} from "mongoose";
+import mongoose, {mongo, Mongoose} from "mongoose";
+import { buffer } from "stream/consumers";
 
 const { MONGODB_URI } = process.env;
 
@@ -34,7 +35,16 @@ async function connectDB() {
         });
     }
     cached.conn = await cached.promise;
+
     return cached.conn;
 }
+
+mongoose.connection.on('connected', () => {
+    console.log('Mongoose connected');
+});
+
+mongoose.connection.on('error', (err) => {
+    console.error('Mongoose connection error: ', err);
+});
 
 export default connectDB;
