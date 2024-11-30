@@ -4,14 +4,15 @@ import React, { useState } from "react";
 import { payInvoiceAsync } from "@/lib/soap"; // Asegúrate de que esta función esté correctamente implementada.
 import { BillingDetails } from "@/types/soapApi";
 import { useSearchParams, useRouter } from "next/navigation";
+import { automaticPay } from "@/actions/invoice/automatic-pay";
 
 export async function InvoicesTable({ invoices }: { invoices: BillingDetails[] }) {
   type InvoiceStatus = 'pending' | 'paid';
   type InvoiceSide = 'supplier' | 'client';
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [statusFilter, setStatusFilter] = useState<InvoiceStatus>('pending');  
-  const [sideFilter, setSideFilter] = useState<InvoiceSide>('supplier');  
+  const [statusFilter, setStatusFilter] = useState<InvoiceStatus>(searchParams.get('status') as InvoiceStatus || 'pending');  
+  const [sideFilter, setSideFilter] = useState<InvoiceSide>(searchParams.get('side') as InvoiceSide || 'client');  
   const [fromDateFilter, setFromDateFilter] = useState<string>(searchParams.get('fromDate') || "");
   const [toDateFilter, setToDateFilter] = useState<string>(searchParams.get('toDate') || "");
 
@@ -39,8 +40,18 @@ export async function InvoicesTable({ invoices }: { invoices: BillingDetails[] }
   const payInvoice = async (invoiceId: string) => {
       try {
           await payInvoiceAsync(invoiceId);
+          invoices = invoices.filter(invoice => invoice.id !== invoiceId);
       } catch (error) {
           console.error('Error paying invoice: ', error);
+      }
+  }
+
+  const payAutomatic = async () => {
+      try {
+          automaticPay();
+          alert('Se estan pagando las facturas pendientes');
+      } catch (error) {
+          console.error('Error paying invoices automatically: ', error);
       }
   }
 
@@ -106,6 +117,13 @@ export async function InvoicesTable({ invoices }: { invoices: BillingDetails[] }
                   >
             Apply Filters
                   </button>
+                  <button
+                      type="button"
+                      onClick={() => payAutomatic()}
+                      className="bg-gray-600 text-white px-6 py-2 rounded-md mt-4 md:mt-0"
+                  >
+            Pay automatic
+                  </button>
               </div>
 
               {/* Tabla de Facturas */}
@@ -128,7 +146,9 @@ export async function InvoicesTable({ invoices }: { invoices: BillingDetails[] }
                                           <td className="px-4 py-4 text-sm text-gray-900">{invoice.status}</td>
                                           <td className="px-4 py-4 text-sm text-gray-900">{invoice.price}</td>
                                           <td className="px-4 py-4 text-sm text-gray-900">
-                                              <button className="text-blue-600 hover:underline" onClick={() => payInvoice(invoice.id)}>Pay</button>
+                                              { statusFilter === 'pending' && sideFilter === 'client' && (
+                                                  <button className="text-blue-600 hover:underline" onClick={() => payInvoice(invoice.id)}>Pay</button>
+                                              )}
                                           </td>
                                       </tr>
                                   ))}

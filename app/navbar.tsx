@@ -23,7 +23,12 @@ export default function Navbar() {
                         <li>
                             <Link href="/web/form" className={`block py-2 px-3  ${pathname === '/web/form' ? 'text-blue-500' : 'text-white'} `} aria-current="page">Crear Orden</Link>
                         </li>
-                                
+                        <li>
+                            <Link href="/web/invoices" className={`block py-2 px-3  ${pathname === '/web/invoices' ? 'text-blue-500' : 'text-white'} `} aria-current="page">Facturas</Link>
+                        </li>
+                        <li>
+                            <Link href="/web/analitics" className={`block py-2 px-3  ${pathname === '/web/analitics' ? 'text-blue-500' : 'text-white'} `} aria-current="page">Analiticas</Link>
+                        </li>      
                     </ul>
                 </div>
             </div>
