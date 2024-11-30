@@ -3,6 +3,7 @@ import Order, { IOrder } from "@/models/Order";
 import connectDB from "@/lib/db";
 import { getSpaceProducts } from "../space/get-space-products";
 import { deliverProduct } from "../product/deliver-product";
+import { sendProduct } from "../product/send-product";
 import { spaceIds } from "../product/constants";
 import sleep from "./cooking";
 
@@ -17,7 +18,11 @@ export async function deliver(order: IOrder) {
         if (readyProducts && readyProducts.length >= product.quantity) {
             for (let i = 0; i < product.quantity; i++) {
                 order.dispatched += 1;
-                await deliverProduct(order._id, readyProducts[i]._id);
+                if (order.client === "999") {
+                    await deliverProduct(order._id, readyProducts[i]._id);
+                } else {
+                    await sendProduct(readyProducts[i]._id, order.client);
+                }
                 await sleep(500);
             }
         } else {
