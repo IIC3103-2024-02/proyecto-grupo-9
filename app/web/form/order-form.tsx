@@ -5,7 +5,7 @@ import { createOrder } from '@/actions/purchaseOrder/create-order';
 import axios from 'axios';
 import { requestProductToAnotherGroup } from '@/actions/product/request-product-group';
 
-const FloatingForm = () => {
+export default function FloatingForm(){
     const [showError, setShowError] = useState({
         sku: false,
         group: false,
@@ -43,18 +43,15 @@ const FloatingForm = () => {
         setShowError(errors);
     
         if (!errors.sku && !errors.group && !errors.quantity) {
-<<<<<<< HEAD
           setSuccessMessage(''); 
           setErrorMessage('');
           console.log('crear orden');
-
-          try {
             const response = await createOrder({
               cliente: "9", 
               proveedor: group, 
               sku: sku,
               cantidad: Number(quantity),
-              vencimiento: vencimiento.toISOString(),
+              vencimiento: vencimiento,
             });
 
             if (response && response.id) { 
@@ -74,7 +71,7 @@ const FloatingForm = () => {
               console.log('Order details:', orderDetails);
               const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
   
-              try {
+            try {
                 const res = await axios.post(apiUrl, orderDetails, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -94,14 +91,13 @@ const FloatingForm = () => {
 
             } else {
               setErrorMessage('Error al crear la orden');
-=======
             setSuccessMessage(''); 
             setErrorMessage('');
             console.log('crear orden');
-
+            }
             
             
-            try {
+            /* try {
                 const response = await requestProductToAnotherGroup(group, sku, Number(quantity));
 
                 setSuccessMessage(`Orden creada con éxito con ID = ${response?.id}`); 
@@ -110,10 +106,9 @@ const FloatingForm = () => {
             } catch (error) {
                 setErrorMessage('Error al crear la orden');
                 console.error('Error:', error);
->>>>>>> ff3e7b1cf539128090d0757702013fe6a579657c
-            }
+            } */
         }
-    };
+    }
 
     return (
         <div className="min-h-screen bg-gray-100 p-0 sm:p-12">
@@ -229,7 +224,5 @@ const FloatingForm = () => {
             </div>
         </div>
     );
-};
-    
-export default FloatingForm;
+}
   
