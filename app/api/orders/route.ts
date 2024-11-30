@@ -9,13 +9,14 @@ import { updateOrder } from "@/actions/purchaseOrder/update-order";
 import { acceptOrder } from "@/actions/order/accept-order";
 import { stockUp } from "@/actions/product/stock-up";
 import { reOrganize } from "@/actions/product/reorganize";
+import { saveBalance } from "@/actions/invoice/balance-interval";
 
 export async function POST(req: NextRequest) {
     try {
         await connectDB();
         const data = await req.json();
         const { id } = data;
-
+        saveBalance();
         // Get Order from api
         const order = await getOrder({ orderId: id });
 

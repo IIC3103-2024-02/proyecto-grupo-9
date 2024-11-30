@@ -16,15 +16,15 @@ export default async function Page() {
     const orders = await Order.find({}).sort({ createdAt: 1 }).exec() as IOrder[];
     const products = await Product.find({}).exec();
     const spaces = await getSpacesDetails();
-    /* const statement = await getBankStatementAsync();
-    const balanceactual= statement['balance']; */
+    const statement = await getBankStatementAsync();
+    const balanceactual= statement['balance'];
     const balances = await getBalance();
     return (
         <div className='flex flex-col items-center'>
-            {/* <div className="text-center mb-4"> 
+            <div className="text-center mb-4"> 
                 <h2 className="text-xl font-semibold">Saldo actual:</h2>
                 <p className="text-3xl font-bold">{balanceactual}</p>
-            </div> */}
+            </div>
             
             <Dashboard  spaces={spaces} />
             <OrdersLineChart orders={JSON.parse(JSON.stringify(orders))} />

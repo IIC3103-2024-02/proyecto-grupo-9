@@ -1,3 +1,4 @@
+'use server'
 
 import { BankStatementResult, BankStatement, GetInvoicesArgs, BillingDetails, BillingDetailsResult } from '@/types/soapApi';
 import soap, { WSSecurity, createClientAsync} from 'soap';
@@ -40,6 +41,9 @@ export async function getInvoicesAsync({status, side, fromDate, toDate} : GetInv
                 if (err) {
                     reject(err); // Handle SOAP operation error
                 } else {
+                    if (!result) {
+                        return resolve([]); // Return an empty array if no BillingDetails are found
+                    }
                     resolve(result.BillingDetails);
                 }
             });

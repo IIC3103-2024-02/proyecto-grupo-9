@@ -3,7 +3,7 @@
 import axios from "axios"
 import { fetchToken } from "@/lib/coffeeshopToken"
 
-export async function sendProduct(productId: string, group: number) {
+export async function sendProduct(productId: string, group: string) {
     try {
         const token = await fetchToken();
         const res = await axios.post(`${process.env.API_URI}/coffeeshop/products/${productId}/group`,

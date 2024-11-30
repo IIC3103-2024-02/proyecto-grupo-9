@@ -71,38 +71,3 @@ export const recipeProducts = [
     "CROISSANTJAMONQUESO",
     "CROISSANTNUTELLA",
 ]
-
-// const a = [{
-// // "CAFEGRANO": 'si',
-//  "CAFEMOLIDOPORCION": 'si',
-// // "CAFEEXPRESSO": 'si',
-// // "CAFEEXPRESSODOBLE": 'si',
-// // "LECHEENTERA": 'si',
-//  "LECHEENTERAPORCION": 'si',
-// // "CAFELATTE": 'si',
-// // "CAFELATTEDOBLE": 'si',
-//  "AZUCARSACHET": 'si',
-//  "ENDULZANTESACHET": 'si',
-//  "VASOCAFE": 'si',
-//  "VASOCAFEDOBLE": 'si',
-//  "VASOCAFEEXPRESO": 'si',
-
-//  "KUCHENMANZANANUEZ": 'si',
-//  "KUCHENMANZANANUEZTROZO": 'si',
-//  "BROWNIE": 'si',
-//  "CHEESECAKE": '---------no',
-//  "CHEESECAKEPORCION": 'si',
-//  "PALMERA": '-----------no',
-//  "CROISSANT": 'si',
-//  "QUESOENTERO": '------no',
-//  "QUESOLAMINADO": 'si',
-//  "JAMONENTERO": 'si',
-//  "JAMONLAMINADO": 'si',
-// // "**** CROISSANTJAMONQUESO *****": 'si',
-
-//  "NUTELLA": '-------------no',
-//  "NUTELLAPORCION": 'si',
-// // "CROISSANTNUTELLA": 'si',
-// }]
-
-
