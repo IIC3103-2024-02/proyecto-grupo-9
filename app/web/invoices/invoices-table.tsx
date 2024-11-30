@@ -110,20 +110,23 @@ export async function InvoicesTable({ invoices }: { invoices: BillingDetails[] }
                           />
                       </div>
                   </div>
-                  <button
-                      type="button"
-                      onClick={handleApplyFilters}
-                      className="bg-blue-600 text-white px-6 py-2 rounded-md mt-4 md:mt-0"
-                  >
+                  <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-400">Total invoices: {invoices.length}</p>
+                      <button
+                          type="button"
+                          onClick={handleApplyFilters}
+                          className="bg-blue-600 text-white px-6 py-2 rounded-md mt-4 md:mt-0"
+                      >
             Apply Filters
-                  </button>
-                  <button
-                      type="button"
-                      onClick={() => payAutomatic()}
-                      className="bg-gray-600 text-white px-6 py-2 rounded-md mt-4 md:mt-0"
-                  >
+                      </button>
+                      <button
+                          type="button"
+                          onClick={() => payAutomatic()}
+                          className="bg-gray-600 text-white px-6 py-2 rounded-md mt-4 md:mt-0"
+                      >
             Pay automatic
-                  </button>
+                      </button>
+                  </div>
               </div>
 
               {/* Tabla de Facturas */}
