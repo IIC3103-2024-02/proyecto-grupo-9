@@ -20,7 +20,7 @@ export default async function Page(props:
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(today.getDate() - 3);
 
-    const side = searchParams?.side || 'supplier';
+    const side = searchParams?.side || 'client';
     const status = searchParams?.status || 'pending';
     const fromDate = searchParams?.fromDate || formatDate(threeDaysAgo);
     const toDate = searchParams?.toDate || formatDate(today);
