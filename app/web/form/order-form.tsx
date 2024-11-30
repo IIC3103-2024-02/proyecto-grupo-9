@@ -43,57 +43,57 @@ export default function FloatingForm(){
         setShowError(errors);
     
         if (!errors.sku && !errors.group && !errors.quantity) {
-          setSuccessMessage(''); 
-          setErrorMessage('');
-          console.log('crear orden');
-            const response = await createOrder({
-              cliente: "9", 
-              proveedor: group, 
-              sku: sku,
-              cantidad: Number(quantity),
-              vencimiento: vencimiento,
-            });
-
-            if (response && response.id) { 
-              setSuccessMessage(`Orden creada con éxito con ID = ${response.id}`); 
-              console.log('Orden creada exitosamente', response);
-
-              const orderDetails = {
-                id: response.id, 
-                order: [
-                  {
-                  sku: sku,
-                  quantity: Number(quantity)
-                  }
-                ],
-                dueDate: response.vencimiento
-              };
-              console.log('Order details:', orderDetails);
-              const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
-  
-            try {
-                const res = await axios.post(apiUrl, orderDetails, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                if (res.status >= 200 && res.status < 300) {
-                    const responseBody = res.data;
-                    console.log('Response:', responseBody);
-  
-                } else {
-                    console.error('Error en enviar la orden:', res.status);
-                }
-              } catch (error) {
-                console.error('Error al realizar la segunda solicitud:', error);
-                alert('Hubo un error al procesar la segunda solicitud.');
-              }
-
-            } else {
-              setErrorMessage('Error al crear la orden');
             setSuccessMessage(''); 
             setErrorMessage('');
             console.log('crear orden');
+            const response = await createOrder({
+                cliente: "9", 
+                proveedor: group, 
+                sku: sku,
+                cantidad: Number(quantity),
+                vencimiento: vencimiento,
+            });
+
+            if (response && response.id) { 
+                setSuccessMessage(`Orden creada con éxito con ID = ${response.id}`); 
+                console.log('Orden creada exitosamente', response);
+
+                const orderDetails = {
+                    id: response.id, 
+                    order: [
+                        {
+                            sku: sku,
+                            quantity: Number(quantity)
+                        }
+                    ],
+                    dueDate: response.vencimiento
+                };
+                console.log('Order details:', orderDetails);
+                const apiUrl = `https://granizo${group}.ing.puc.cl/api/orders`;
+  
+                try {
+                    const res = await axios.post(apiUrl, orderDetails, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    if (res.status >= 200 && res.status < 300) {
+                        const responseBody = res.data;
+                        console.log('Response:', responseBody);
+  
+                    } else {
+                        console.error('Error en enviar la orden:', res.status);
+                    }
+                } catch (error) {
+                    console.error('Error al realizar la segunda solicitud:', error);
+                    alert('Hubo un error al procesar la segunda solicitud.');
+                }
+
+            } else {
+                setErrorMessage('Error al crear la orden');
+                setSuccessMessage(''); 
+                setErrorMessage('');
+                console.log('crear orden');
             }
             
             
